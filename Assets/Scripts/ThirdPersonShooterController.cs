@@ -1,6 +1,6 @@
-using UnityEngine;
 using Cinemachine;
 using StarterAssets;
+using UnityEngine;
 
 public class ThirdPersonShooterController : MonoBehaviour
 {
@@ -12,11 +12,17 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private float aimCameraDistance;
     [SerializeField, Min(0.01f)] private float aimChangeSpeed;
     [SerializeField] private LayerMask aimColliderLayerMask;
+    [SerializeField] private float distanceRay;
+    [SerializeField] private Transform hitPartical;
+    [SerializeField] private CrosshairScatter crosshair;
+    [SerializeField] private Transform bulletHole;
+
 
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs starterAssetsInputs;
     private Cinemachine3rdPersonFollow personFollowComponent;
+
 
     private void Awake()
     {
@@ -30,14 +36,32 @@ public class ThirdPersonShooterController : MonoBehaviour
         Vector3 mouseWorldPosition = Vector3.zero;
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, 20f, aimColliderLayerMask))
+        Transform hitTransform = null;
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, distanceRay, aimColliderLayerMask))
         {
+            Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.blue);
             mouseWorldPosition = raycastHit.point;
+            hitTransform = raycastHit.transform;
+
         }
         Vector3 worldAimTarget = mouseWorldPosition;
         worldAimTarget.y = transform.position.y;
         Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
 
+        if (starterAssetsInputs.shoot)
+        {
+            crosshair.ChangeSizeCrosshairOnShoot();
+            if (hitTransform != null)
+            {
+                Instantiate(bulletHole, raycastHit.point, Quaternion.identity);
+                Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
+            }
+            Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.red);
+        }
+        else
+        {
+            crosshair.ChangeSizeCrosshairOnNormal();
+        }
         transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
         if (starterAssetsInputs.aim)
         {
