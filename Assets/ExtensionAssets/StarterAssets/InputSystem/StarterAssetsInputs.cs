@@ -14,6 +14,7 @@ namespace StarterAssets
 		public bool sprint;
 		public bool crouch;
 		public bool liedown;
+		public bool aim;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -57,6 +58,11 @@ namespace StarterAssets
 		{
 			LieDownInput(value.isPressed);
 		}
+
+		public void OnAim(InputValue value)
+		{
+			AimInput(value.isPressed);
+		}
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -91,6 +97,12 @@ namespace StarterAssets
 		{
 			liedown = newLieDownState;
 		}
+
+		public void AimInput(bool newAimState)
+		{
+			aim = newAimState;
+		}
+
 
 #if !UNITY_IOS || !UNITY_ANDROID
 
