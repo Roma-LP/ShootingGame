@@ -66,6 +66,8 @@ namespace StarterAssets
         // player
         private float _speed;
         private float _animationBlend;
+        private float _animationBlandMove_x;
+        private float _animationBlandMove_y;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
@@ -127,8 +129,12 @@ namespace StarterAssets
             CrouchLie();
             Move();
 
-            print("_input.move.x" + _input.move.x);
-            print("_input.move.y" + _input.move.y);
+            //print("_input.move.x " + _input.move.x);
+            //print("_input.move.y " + _input.move.y);
+            //print("_input.move.magnitude " + _input.move.magnitude);
+            print("_controller.velocity.x " + _controller.velocity.x);
+            print("_controller.velocity.y " + _controller.velocity.y);
+            print("_controller.velocity.z " + _controller.velocity.z);
         }
 
         private void LateUpdate()
@@ -233,13 +239,28 @@ namespace StarterAssets
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
+            float target_x=0;
+            float target_y=0;
+            if(_input.move != Vector2.zero)
+            {
+                target_x = _input.move.x;
+                target_y = _input.move.y;
+            }
+            else
+            {
+                target_x = 0;
+                target_y = 0;
+            }
             // update animator if using character
+            _animationBlandMove_x = Mathf.Lerp(_animationBlandMove_x, target_x, Time.deltaTime * SpeedChangeRate);
+            _animationBlandMove_y = Mathf.Lerp(_animationBlandMove_y, target_y, Time.deltaTime * SpeedChangeRate);
+            //print("_animationBlend " +_animationBlend);
             if (_hasAnimator)
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-                _animator.SetFloat(_animIDmoove_x, _input.move.x);
-                _animator.SetFloat(_animIDmoove_y, _input.move.y);
+                _animator.SetFloat(_animIDmoove_x, _animationBlandMove_x);
+                _animator.SetFloat(_animIDmoove_y, _animationBlandMove_y);
             }
         }
         private void CrouchLie()
