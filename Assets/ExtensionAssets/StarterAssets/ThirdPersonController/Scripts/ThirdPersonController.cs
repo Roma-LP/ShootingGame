@@ -85,6 +85,8 @@ namespace StarterAssets
         private int _animIDMotionSpeed;
         private int _animIDCrouch;
         private int _animIDLie;
+        private int _animIDmoove_x;
+        private int _animIDmoove_y;
 
         private Animator _animator;
         private CharacterController _controller;
@@ -124,6 +126,9 @@ namespace StarterAssets
             GroundedCheck();
             CrouchLie();
             Move();
+
+            print("_input.move.x" + _input.move.x);
+            print("_input.move.y" + _input.move.y);
         }
 
         private void LateUpdate()
@@ -140,6 +145,9 @@ namespace StarterAssets
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDCrouch = Animator.StringToHash("Crouch");
             _animIDLie = Animator.StringToHash("Lie");
+
+            _animIDmoove_x = Animator.StringToHash("move_x");
+            _animIDmoove_y = Animator.StringToHash("move_y");
         }
 
         private void GroundedCheck()
@@ -182,7 +190,7 @@ namespace StarterAssets
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
             if (_input.move == Vector2.zero) targetSpeed = 0.0f;
-
+            
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
@@ -230,6 +238,8 @@ namespace StarterAssets
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+                _animator.SetFloat(_animIDmoove_x, _input.move.x);
+                _animator.SetFloat(_animIDmoove_y, _input.move.y);
             }
         }
         private void CrouchLie()
