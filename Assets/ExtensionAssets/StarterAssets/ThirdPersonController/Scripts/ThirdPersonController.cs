@@ -85,6 +85,8 @@ namespace StarterAssets
         private int _animIDMotionSpeed;
         private int _animIDCrouch;
         private int _animIDLie;
+        private int _animIDmoove_x;
+        private int _animIDmoove_y;
 
         private Animator _animator;
         private CharacterController _controller;
@@ -143,6 +145,9 @@ namespace StarterAssets
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDCrouch = Animator.StringToHash("Crouch");
             _animIDLie = Animator.StringToHash("Lie");
+
+            _animIDmoove_x = Animator.StringToHash("move_x");
+            _animIDmoove_y = Animator.StringToHash("move_y");
         }
 
         private void GroundedCheck()
@@ -233,6 +238,8 @@ namespace StarterAssets
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+                _animator.SetFloat(_animIDmoove_x, _input.move.x);
+                _animator.SetFloat(_animIDmoove_y, _input.move.y);
             }
         }
         private void CrouchLie()
