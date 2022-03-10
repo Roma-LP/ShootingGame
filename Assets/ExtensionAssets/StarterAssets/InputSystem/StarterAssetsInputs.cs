@@ -15,6 +15,7 @@ namespace StarterAssets
 		public bool crouch;
 		public bool liedown;
 		public bool aim;
+		public bool shoot;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
