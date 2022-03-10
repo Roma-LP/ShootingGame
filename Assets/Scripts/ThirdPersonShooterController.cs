@@ -53,8 +53,12 @@ public class ThirdPersonShooterController : MonoBehaviour
             crosshair.ChangeSizeCrosshairOnShoot();
             if (hitTransform != null)
             {
-                Instantiate(bulletHole, raycastHit.point, Quaternion.identity);
                 Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
+            
+                var hole = Instantiate(bulletHole, raycastHit.point + raycastHit.normal * 0.001f, Quaternion.identity);
+                hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
+                hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
+                hole.transform.Rotate(new Vector3(0, 0, 0));
             }
             Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.red);
         }

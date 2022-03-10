@@ -6,7 +6,7 @@ public class CrosshairScatter : MonoBehaviour
 {
     [SerializeField] private float normalScatter = 1f;
     [SerializeField] private float shootScatter = 2f;
-    [SerializeField] private float stepAnim;
+    [SerializeField, Min(0.01f)] private float stepAnim;
     [SerializeField] private Image crosshair;
 
 
