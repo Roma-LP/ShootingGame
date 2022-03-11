@@ -15,6 +15,8 @@ namespace StarterAssets
     public class ThirdPersonController : MonoBehaviour
     {
         [Header("Player")]
+        [Tooltip("Prone speed of the character in m/s")]
+        public float ProneSpeed = 2.0f;
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
         [Tooltip("Sprint speed of the character in m/s")]
@@ -86,7 +88,7 @@ namespace StarterAssets
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
         private int _animIDCrouch;
-        private int _animIDLie;
+        private int _animIDProne;
         private int _animIDmoove_x;
         private int _animIDmoove_y;
 
@@ -98,6 +100,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool isProne;
 
         private void Awake()
         {
@@ -106,13 +109,14 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+            _input = GetComponent<StarterAssetsInputs>();
+            _input.OnProneCustom += Prone;
         }
 
         private void Start()
         {
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
-            _input = GetComponent<StarterAssetsInputs>();
             AssignAnimationIDs();
 
             // reset our timeouts on start
@@ -132,9 +136,9 @@ namespace StarterAssets
             //print("_input.move.x " + _input.move.x);
             //print("_input.move.y " + _input.move.y);
             //print("_input.move.magnitude " + _input.move.magnitude);
-            print("_controller.velocity.x " + _controller.velocity.x);
-            print("_controller.velocity.y " + _controller.velocity.y);
-            print("_controller.velocity.z " + _controller.velocity.z);
+            //print("_controller.velocity.x " + _controller.velocity.x);
+            //print("_controller.velocity.y " + _controller.velocity.y);
+            //print("_controller.velocity.z " + _controller.velocity.z);
         }
 
         private void LateUpdate()
@@ -150,7 +154,7 @@ namespace StarterAssets
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDCrouch = Animator.StringToHash("Crouch");
-            _animIDLie = Animator.StringToHash("Lie");
+            _animIDProne = Animator.StringToHash("Prone");
 
             _animIDmoove_x = Animator.StringToHash("move_x");
             _animIDmoove_y = Animator.StringToHash("move_y");
@@ -189,7 +193,11 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed;
+            if(_input.sprint) targetSpeed = SprintSpeed;
+            else targetSpeed = MoveSpeed;
+            if (isProne) targetSpeed = ProneSpeed;
+            //targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -275,6 +283,22 @@ namespace StarterAssets
             }
         }
 
+        private void Prone()
+        {
+            if(isProne)
+            {
+                _animator.SetBool(_animIDProne, false);
+                isProne = false;
+                print("lol");
+            }
+            else
+            {
+                _animator.SetBool(_animIDProne, true);
+                isProne = true;
+                print("kek");
+            }
+        }
+
         private void JumpAndGravity()
         {
             if (Grounded)
@@ -305,6 +329,9 @@ namespace StarterAssets
                     if (_hasAnimator)
                     {
                         _animator.SetBool(_animIDJump, true);
+                        _animator.SetBool(_animIDCrouch, false);
+                        _animator.SetBool(_animIDProne, false);
+                        isProne = false;
                     }
                 }
 
@@ -371,6 +398,11 @@ namespace StarterAssets
         public void SetRotateOnMove(bool newRotateOnMove)
         {
             _rotateOnMove = newRotateOnMove;
+        }
+
+        private void OnDestroy()
+        {
+            _input.OnProneCustom -= Prone;
         }
     }
 }

@@ -29,6 +29,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         thirdPersonController = GetComponent<ThirdPersonController>();
         starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+
     }
 
     private void Update()

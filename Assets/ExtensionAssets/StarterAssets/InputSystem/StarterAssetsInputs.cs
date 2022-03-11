@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -7,13 +8,15 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
+		public event Action OnProneCustom;
+
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
 		public bool crouch;
-		public bool liedown;
+		public bool prone;
 		public bool aim;
 		public bool shoot;
 
@@ -56,9 +59,10 @@ namespace StarterAssets
 			CrouchInput(value.isPressed);
 		}
 
-		public void OnLieDown(InputValue value)
+		public void OnProne(InputValue value)
 		{
-			LieDownInput(value.isPressed);
+			OnProneCustom?.Invoke();
+			//ProneInput(value.isPressed);
 		}
 
 		public void OnAim(InputValue value)
@@ -99,9 +103,9 @@ namespace StarterAssets
 			crouch = newCrouchState;
 		}
 
-		public void LieDownInput(bool newLieDownState)
+		public void ProneInput(bool newProneState)
 		{
-			liedown = newLieDownState;
+			prone = newProneState;
 		}
 
 		public void AimInput(bool newAimState)

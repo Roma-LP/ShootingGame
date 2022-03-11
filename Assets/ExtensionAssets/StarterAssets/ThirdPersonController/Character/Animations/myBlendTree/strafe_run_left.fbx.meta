@@ -1,17 +1,11 @@
 fileFormatVersion: 2
-guid: 27aba825f9c24814aa4cf120ce74d8b6
+guid: c9fd5cba721b69445bc46a2af54ae2a0
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
   - first:
-      74: 1827226128182048838
-    second: Take 001
-  - first:
       74: -203655887218126122
-    second: mixamo.com
-  - first:
-      74: -3780516532778130023
-    second: CrouchIdl
+    second: strafe_run_left
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -33,7 +27,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -42,25 +36,25 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: CrouchIdl
+      name: strafe_run_left
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 63
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 1
+      hasAdditiveReferencePose: 0
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 1
-      keepOriginalOrientation: 0
+      keepOriginalOrientation: 1
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
