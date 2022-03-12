@@ -51,6 +51,8 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
+            //_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+            //888888888888888888888888888888888888888888888888888888
             crosshair.ChangeSizeCrosshairOnShoot();
             if (hitTransform != null)
             {
