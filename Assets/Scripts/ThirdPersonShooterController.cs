@@ -1,5 +1,6 @@
 using Cinemachine;
 using StarterAssets;
+using System.Collections;
 using UnityEngine;
 
 public class ThirdPersonShooterController : MonoBehaviour
@@ -17,11 +18,17 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private CrosshairScatter crosshair;
     [SerializeField] private Transform bulletHole;
 
+    [SerializeField] private Transform spawnPointer;
+    [SerializeField, Range(0f, 2500f)] protected float forceThrow;
+    [SerializeField] private GameObject prefabGrenade;
 
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs starterAssetsInputs;
     private Cinemachine3rdPersonFollow personFollowComponent;
+    private bool isPlaying;
+    private Vector2 screenCenterPoint;
+    private Ray ray;
 
 
     private void Awake()
@@ -35,8 +42,8 @@ public class ThirdPersonShooterController : MonoBehaviour
     private void Update()
     {
         Vector3 mouseWorldPosition = Vector3.zero;
-        Vector2 screenCenterPoint = new Vector2(Screen.width / 2, Screen.height / 2);
-        Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+        screenCenterPoint = new Vector2(Screen.width / 2, Screen.height / 2);
+        ray = Camera.main.ScreenPointToRay(screenCenterPoint);
         Transform hitTransform = null;
         if (Physics.Raycast(ray, out RaycastHit raycastHit, distanceRay, aimColliderLayerMask))
         {
@@ -51,8 +58,10 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
-            //_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
-            //888888888888888888888888888888888888888888888888888888
+            if(thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
+            {
+                if(isPlaying == false) StartCoroutine(Grenade());
+            }
             crosshair.ChangeSizeCrosshairOnShoot();
             if (hitTransform != null)
             {
@@ -88,5 +97,17 @@ public class ThirdPersonShooterController : MonoBehaviour
             thirdPersonController.SetSensitivity(normalSensitivity);
             thirdPersonController.SetRotateOnMove(true);
         }
+    }
+
+    IEnumerator Grenade()
+    {
+        isPlaying = true;
+        GameObject grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
+        //grenade.transform.SetParent(spawnPointer,false);
+        //GameObject grenade = Instantiate(prefabGrenade, spawnPointer);
+        //grenade.transform.SetParent(null);
+        grenade.GetComponent<Rigidbody>().AddForce(ray.direction * forceThrow);
+        yield return new WaitForSeconds(5f);
+        isPlaying = false;
     }
 }

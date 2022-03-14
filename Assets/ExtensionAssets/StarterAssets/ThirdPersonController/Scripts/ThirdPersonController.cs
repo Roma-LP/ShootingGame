@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -61,6 +62,8 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        public Weapons CurrentWeapon { get { return currentWeapon; } }
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -77,6 +80,10 @@ namespace StarterAssets
         private float _terminalVelocity = 53.0f;
         [SerializeField] private float Sensitivity = 1f;
         [SerializeField] private bool _rotateOnMove = true;
+        [SerializeField] private GameObject mainWepon;
+        [SerializeField] private GameObject pistol;
+        [SerializeField] private GameObject knife;
+        [SerializeField] private GameObject grenade;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -109,6 +116,9 @@ namespace StarterAssets
         private bool _hasAnimator;
         private bool isProne;
         private Weapons currentWeapon;
+        private bool isCoroutinesWork;
+
+
 
         private void Awake()
         {
@@ -422,18 +432,31 @@ namespace StarterAssets
             if (_input.shoot)
             {
                 _animationBlendAction = Mathf.Lerp(_animationBlendAction, 1, Time.deltaTime * SpeedChangeRate);
+                if (currentWeapon == Weapons.ThirdWeapon)
+                {
+                    if (!isCoroutinesWork) StartCoroutine(WaitAnim());
+                }
                 _animator.SetBool(_animIDActionShoot, true);
             }
             else
             {
                 _animationBlendAction = Mathf.Lerp(_animationBlendAction, 0, Time.deltaTime * SpeedChangeRate);
                 _animator.SetBool(_animIDActionShoot, false);
+                //_animator.SetLayerWeight(2, 0);
             }
 
             if (_hasAnimator)
             {
                 _animator.SetFloat(_animIDAction, _animationBlendAction);
             }
+        }
+        private IEnumerator WaitAnim()
+        {
+            isCoroutinesWork = true;
+            _animator.SetLayerWeight(2, 1);
+            yield return new WaitForSeconds(2f);
+            _animator.SetLayerWeight(2, 0);
+            isCoroutinesWork = false;
         }
         private void SetWeapon(Weapons weapons)
         {
@@ -442,19 +465,27 @@ namespace StarterAssets
             _animator.SetBool(_animIDSecondWeapon, false);
             _animator.SetBool(_animIDThirdWeapon, false);
             _animator.SetBool(_animIDFourthWeapon, false);
+            mainWepon.SetActive(false);
+            pistol.SetActive(false);
+            knife.SetActive(false);
+            grenade.SetActive(false);
             switch (currentWeapon)
             {
                 case Weapons.FirstWeapon:
                     _animator.SetBool(_animIDFirstWeapon, true);
+                    mainWepon.SetActive(true);
                     break;
                 case Weapons.SecondWeapon:
                     _animator.SetBool(_animIDSecondWeapon, true);
+                    pistol.SetActive(true);
                     break;
                 case Weapons.ThirdWeapon:
                     _animator.SetBool(_animIDThirdWeapon, true);
+                    knife.SetActive(true);
                     break;
                 case Weapons.FourthWeapon:
                     _animator.SetBool(_animIDFourthWeapon, true);
+                    grenade.SetActive(true);
                     break;
             }
         }
