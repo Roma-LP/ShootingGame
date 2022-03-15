@@ -8,18 +8,28 @@ public abstract class Grenade : MonoBehaviour
     [SerializeField] protected AudioClip audioClipExplosion;
     [SerializeField, Range(1f, 10f)] protected float timeToExplosion;
 
+    protected Rigidbody body;
+
     private AudioSource audioSource;
 
-    abstract protected IEnumerator Launch();
+    protected virtual IEnumerator Throwing()
+    {
+        yield return new WaitForSeconds(timeToExplosion);
+        body.isKinematic = true;
+        StartCoroutine(Explosion());
+    }
+
+    public void Throw(Vector3 direction)
+    {
+        body.AddForce(direction);
+        StartCoroutine(Throwing());
+    }
+
+    protected abstract IEnumerator Explosion();
 
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();  
-    }
-
-    private void OnEnable()
-    {
-        print("qwerty");
-        StartCoroutine(Launch());
+        body = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
 }

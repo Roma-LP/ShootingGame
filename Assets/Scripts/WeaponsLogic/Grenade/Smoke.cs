@@ -4,17 +4,28 @@ using UnityEngine;
 
 public class Smoke : Grenade
 {
-    [SerializeField] private ParticleSystem smokeParticle;
+    [SerializeField] private ParticleSystem smokePrefab;
+    [SerializeField] private float minVelocity = 0.01f;
+    [SerializeField] private float lifeSmoke;
 
-    protected override IEnumerator Launch()
+    protected override IEnumerator Throwing()
     {
-        print(timeToExplosion);
         yield return new WaitForSeconds(timeToExplosion);
-        //rigidbody.velocity = Vector3.zero;
-        print("kek");
-        smokeParticle.Play();
-        //yield return new WaitForSeconds(smokeParticle);
-        //Destroy(gameObject);
-        print("lol");
+        do
+        {
+            yield return new WaitForFixedUpdate();
+        } while (body.velocity.magnitude > minVelocity);
+        body.isKinematic = true;
+        StartCoroutine(Explosion());
+    }
+
+    protected override IEnumerator Explosion()
+    {
+        var smoke = Instantiate(smokePrefab, transform.position, Quaternion.identity);
+        var smokePartickeSystem = smoke.main;
+        smokePartickeSystem.duration = lifeSmoke * smokePartickeSystem.simulationSpeed - smokePartickeSystem.startLifetimeMultiplier;
+        smoke.Play();
+        yield return new WaitForSeconds(lifeSmoke);
+        Destroy(gameObject);
     }
 }

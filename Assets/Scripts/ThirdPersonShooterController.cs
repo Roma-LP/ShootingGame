@@ -20,7 +20,7 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     [SerializeField] private Transform spawnPointer;
     [SerializeField, Range(0f, 2500f)] protected float forceThrow;
-    [SerializeField] private GameObject prefabGrenade;
+    [SerializeField] private Grenade prefabGrenade;
 
 
     private ThirdPersonController thirdPersonController;
@@ -102,12 +102,9 @@ public class ThirdPersonShooterController : MonoBehaviour
     IEnumerator Grenade()
     {
         isPlaying = true;
-        GameObject grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
-        //grenade.transform.SetParent(spawnPointer,false);
-        //GameObject grenade = Instantiate(prefabGrenade, spawnPointer);
-        //grenade.transform.SetParent(null);
-        grenade.GetComponent<Rigidbody>().AddForce(ray.direction * forceThrow);
-        yield return new WaitForSeconds(5f);
+        Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
+        grenade.Throw(ray.direction * forceThrow);
+        yield return new WaitForSeconds(1.5f);
         isPlaying = false;
     }
 }
