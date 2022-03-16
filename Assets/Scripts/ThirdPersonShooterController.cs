@@ -20,23 +20,30 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     [SerializeField] private Transform spawnPointer;
     [SerializeField, Range(0f, 2500f)] protected float forceThrow;
+    [SerializeField] private Weapon firstWeapon;
+    [SerializeField] private Weapon secondWeapon;
+    [SerializeField] private ColdWeapon thirdWeapon;
     [SerializeField] private Grenade prefabGrenade;
+    [SerializeField] private StarterAssetsInputs starterAssetsInputs;
 
 
     private ThirdPersonController thirdPersonController;
-    private StarterAssetsInputs starterAssetsInputs;
     private Cinemachine3rdPersonFollow personFollowComponent;
     private bool isPlaying;
     private Vector2 screenCenterPoint;
     private Ray ray;
+    private Weapons currentWeapon;
 
 
     private void Awake()
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
-        starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
 
+        starterAssetsInputs.OnFirstWeaponCustom += SetWeapon;
+        starterAssetsInputs.OnSecondWeaponCustom += SetWeapon;
+        starterAssetsInputs.OnThirdWeaponCustom += SetWeapon;
+        starterAssetsInputs.OnFourthWeaponCustom += SetWeapon;
     }
 
     private void Update()
@@ -58,20 +65,43 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
-            if(thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
+            switch (thirdPersonController.CurrentWeapon)
             {
-                if(isPlaying == false) StartCoroutine(Grenade());
+                case Weapons.FirstWeapon:
+                    print("FirstWeapon do");
+                    firstWeapon.Shoot(raycastHit);
+                    print("FirstWeapon posle");
+                    break;
+                case Weapons.SecondWeapon:
+                    secondWeapon.Shoot(raycastHit);
+                    print("SecondWeapon");
+                    break;
+                case Weapons.ThirdWeapon:
+                    print("ThirdWeapon");
+                    break;
+                case Weapons.FourthWeapon:
+                    if (isPlaying == false) StartCoroutine(Grenade());
+                    break;
             }
-            crosshair.ChangeSizeCrosshairOnShoot();
-            if (hitTransform != null)
-            {
-                Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
+
+
+
+
+
+            //if (thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
+            //{
+            //    if(isPlaying == false) StartCoroutine(Grenade());
+            //}
+            //crosshair.ChangeSizeCrosshairOnShoot();
+            //if (hitTransform != null)
+            //{
+            //    Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
             
-                var hole = Instantiate(bulletHole, raycastHit.point + raycastHit.normal * 0.001f, Quaternion.identity);
-                hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
-                hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
-                hole.transform.Rotate(new Vector3(0, 0, 0));
-            }
+            //    var hole = Instantiate(bulletHole, raycastHit.point + raycastHit.normal * 0.001f, Quaternion.identity);
+            //    hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
+            //    hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
+            //    hole.transform.Rotate(new Vector3(0, 0, 0));
+            //}
             Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.red);
         }
         else
@@ -99,6 +129,30 @@ public class ThirdPersonShooterController : MonoBehaviour
         }
     }
 
+    private void SetWeapon(Weapons weapons)
+    {
+        currentWeapon = weapons;
+        firstWeapon.gameObject.SetActive(false);
+        secondWeapon.gameObject.SetActive(false);
+        thirdWeapon.gameObject.SetActive(false);
+        prefabGrenade.gameObject.SetActive(false);
+        switch (currentWeapon)
+        {
+            case Weapons.FirstWeapon:
+                firstWeapon.gameObject.SetActive(true);
+                break;
+            case Weapons.SecondWeapon:
+                secondWeapon.gameObject.SetActive(true);
+                break;
+            case Weapons.ThirdWeapon:
+                thirdWeapon.gameObject.SetActive(true);
+                break;
+            case Weapons.FourthWeapon:
+                prefabGrenade.gameObject.SetActive(true);
+                break;
+        }
+    }
+
     IEnumerator Grenade()
     {
         isPlaying = true;
@@ -106,5 +160,13 @@ public class ThirdPersonShooterController : MonoBehaviour
         grenade.Throw(ray.direction * forceThrow);
         yield return new WaitForSeconds(1.5f);
         isPlaying = false;
+    }
+
+    private void OnDestroy()
+    {
+        starterAssetsInputs.OnFirstWeaponCustom -= SetWeapon;
+        starterAssetsInputs.OnSecondWeaponCustom -= SetWeapon;
+        starterAssetsInputs.OnThirdWeaponCustom -= SetWeapon;
+        starterAssetsInputs.OnFourthWeaponCustom -= SetWeapon;
     }
 }

@@ -80,10 +80,6 @@ namespace StarterAssets
         private float _terminalVelocity = 53.0f;
         [SerializeField] private float Sensitivity = 1f;
         [SerializeField] private bool _rotateOnMove = true;
-        [SerializeField] private GameObject mainWepon;
-        [SerializeField] private GameObject pistol;
-        [SerializeField] private GameObject knife;
-        [SerializeField] private GameObject grenade;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -460,32 +456,24 @@ namespace StarterAssets
         }
         private void SetWeapon(Weapons weapons)
         {
-            currentWeapon = weapons;
+            currentWeapon = weapons; // для работы ножа IEnumerator WaitAnim(), переписать в скрипт ножа!
             _animator.SetBool(_animIDFirstWeapon, false);
             _animator.SetBool(_animIDSecondWeapon, false);
             _animator.SetBool(_animIDThirdWeapon, false);
             _animator.SetBool(_animIDFourthWeapon, false);
-            mainWepon.SetActive(false);
-            pistol.SetActive(false);
-            knife.SetActive(false);
-            grenade.SetActive(false);
-            switch (currentWeapon)
+            switch (weapons)
             {
                 case Weapons.FirstWeapon:
                     _animator.SetBool(_animIDFirstWeapon, true);
-                    mainWepon.SetActive(true);
                     break;
                 case Weapons.SecondWeapon:
                     _animator.SetBool(_animIDSecondWeapon, true);
-                    pistol.SetActive(true);
                     break;
                 case Weapons.ThirdWeapon:
                     _animator.SetBool(_animIDThirdWeapon, true);
-                    knife.SetActive(true);
                     break;
                 case Weapons.FourthWeapon:
                     _animator.SetBool(_animIDFourthWeapon, true);
-                    grenade.SetActive(true);
                     break;
             }
         }
