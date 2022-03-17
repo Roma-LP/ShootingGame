@@ -104,7 +104,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9023738284008932032
 Transform:
   m_ObjectHideFlags: 0
@@ -295,7 +295,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40390f0309d4b424f9fc8e5ca5dc4113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rateOfFire: 0.8
+  ammoDamage: 30
   audioClipExplosion: {fileID: 0}
+  prefabHitPartical: {fileID: 0}
+  prefabBulletHole: {fileID: 0}
+  ammoMagazine: 4
   timeToExplosion: 5
   smokePrefab: {fileID: 4954595265455955032, guid: b93a9390138b8204883855d7dfdadac6, type: 3}
   minVelocity: 0.5

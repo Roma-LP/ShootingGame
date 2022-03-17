@@ -9,10 +9,7 @@ namespace StarterAssets
 	public class StarterAssetsInputs : MonoBehaviour
 	{
 		public event Action OnProneCustom;
-		public event Action<Weapons> OnFirstWeaponCustom;
-		public event Action<Weapons> OnSecondWeaponCustom;
-		public event Action<Weapons> OnThirdWeaponCustom;
-		public event Action<Weapons> OnFourthWeaponCustom;
+		public event Action<Weapons> OnPickWeaponCustom;
 
 		[Header("Character Input Values")]
 		public Vector2 move;
@@ -80,22 +77,22 @@ namespace StarterAssets
 
 		public void OnFirstWeapon(InputValue value)
         {
-			OnFirstWeaponCustom?.Invoke(Weapons.FirstWeapon);
+			OnPickWeaponCustom?.Invoke(Weapons.FirstWeapon);
         }
 
 		public void OnSecondWeapon(InputValue value)
 		{
-			OnSecondWeaponCustom?.Invoke(Weapons.SecondWeapon);
+			OnPickWeaponCustom?.Invoke(Weapons.SecondWeapon);
 		}
 
 		public void OnThirdWeapon(InputValue value)
 		{
-			OnThirdWeaponCustom?.Invoke(Weapons.ThirdWeapon);
+			OnPickWeaponCustom?.Invoke(Weapons.ThirdWeapon);
 		}
 
 		public void OnFourthWeapon(InputValue value)
 		{
-			OnFourthWeaponCustom?.Invoke(Weapons.FourthWeapon);
+			OnPickWeaponCustom?.Invoke(Weapons.FourthWeapon);
 		}
 #else
 	// old input sys if we do decide to have it (most likely wont)...

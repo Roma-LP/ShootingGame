@@ -1,15 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource), typeof(Rigidbody))]
-public abstract class Grenade : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public abstract class Grenade : AmmoManager
 {
-    [SerializeField] protected AudioClip audioClipExplosion;
     [SerializeField, Range(1f, 10f)] protected float timeToExplosion;
 
     protected Rigidbody body;
-
-    private AudioSource audioSource;
 
     protected virtual IEnumerator Throwing()
     {
@@ -18,17 +15,23 @@ public abstract class Grenade : MonoBehaviour
         StartCoroutine(Explosion());
     }
 
-    public void Throw(Vector3 direction)
+    public void Throw(Vector3 direction)  // будет private
     {
         body.AddForce(direction);
         StartCoroutine(Throwing());
     }
+
+    public override void UseWepon(Ray ray)
+    {
+        if (CheckCountAmmo())
+            print("kek");
+    }
+
 
     protected abstract IEnumerator Explosion();
 
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
     }
 }

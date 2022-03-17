@@ -20,11 +20,12 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     [SerializeField] private Transform spawnPointer;
     [SerializeField, Range(0f, 2500f)] protected float forceThrow;
-    [SerializeField] private Weapon firstWeapon;
-    [SerializeField] private Weapon secondWeapon;
+    [SerializeField] private Firearms firstWeapon;
+    [SerializeField] private Firearms secondWeapon;
     [SerializeField] private ColdWeapon thirdWeapon;
     [SerializeField] private Grenade prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
+    [SerializeField] private MagazineAmmos magazineAmmos;
 
 
     private ThirdPersonController thirdPersonController;
@@ -32,7 +33,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     private bool isPlaying;
     private Vector2 screenCenterPoint;
     private Ray ray;
-    private Weapons currentWeapon;
+    private BaseWeapon currentWeapon_v2;
 
 
     private void Awake()
@@ -40,49 +41,51 @@ public class ThirdPersonShooterController : MonoBehaviour
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
 
-        starterAssetsInputs.OnFirstWeaponCustom += SetWeapon;
-        starterAssetsInputs.OnSecondWeaponCustom += SetWeapon;
-        starterAssetsInputs.OnThirdWeaponCustom += SetWeapon;
-        starterAssetsInputs.OnFourthWeaponCustom += SetWeapon;
+        currentWeapon_v2 = firstWeapon;
+        SetAmmoWepon(currentWeapon_v2);
+
+        starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
 
     private void Update()
     {
-        Vector3 mouseWorldPosition = Vector3.zero;
+        //Vector3 mouseWorldPosition = Vector3.zero;
         screenCenterPoint = new Vector2(Screen.width / 2, Screen.height / 2);
         ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-        Transform hitTransform = null;
-        if (Physics.Raycast(ray, out RaycastHit raycastHit, distanceRay, aimColliderLayerMask))
-        {
-            Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.blue);
-            mouseWorldPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
+        //Transform hitTransform = null;
+        //if (Physics.Raycast(ray, out RaycastHit raycastHit, distanceRay, aimColliderLayerMask))
+        //{
+        //    Debug.DrawRay(ray.origin, ray.direction * distanceRay, Color.blue);
+        //    mouseWorldPosition = raycastHit.point;
+        //    hitTransform = raycastHit.transform;
 
-        }
-        Vector3 worldAimTarget = mouseWorldPosition;
-        worldAimTarget.y = transform.position.y;
-        Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+        //}
+        //Vector3 worldAimTarget = mouseWorldPosition;
+        //worldAimTarget.y = transform.position.y;
+        //Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
 
         if (starterAssetsInputs.shoot)
         {
-            switch (thirdPersonController.CurrentWeapon)
-            {
-                case Weapons.FirstWeapon:
-                    print("FirstWeapon do");
-                    firstWeapon.Shoot(raycastHit);
-                    print("FirstWeapon posle");
-                    break;
-                case Weapons.SecondWeapon:
-                    secondWeapon.Shoot(raycastHit);
-                    print("SecondWeapon");
-                    break;
-                case Weapons.ThirdWeapon:
-                    print("ThirdWeapon");
-                    break;
-                case Weapons.FourthWeapon:
-                    if (isPlaying == false) StartCoroutine(Grenade());
-                    break;
-            }
+            currentWeapon_v2.UseWepon(ray);
+            SetAmmoWepon(currentWeapon_v2);
+            //switch (thirdPersonController.CurrentWeapon)
+            //{
+            //    case Weapons.FirstWeapon:
+            //        firstWeapon.UseWepon(raycastHit);
+            //        magazineAmmos.SetCountMagazine(firstWeapon.GetAmmoMagazine());
+            //        magazineAmmos.SetCurrentAmmo(firstWeapon.GetCurrentAmmo());
+            //        break;
+            //    case Weapons.SecondWeapon:
+            //        secondWeapon.UseWepon(raycastHit);
+            //        magazineAmmos.SetCountMagazine(secondWeapon.GetAmmoMagazine());
+            //        magazineAmmos.SetCurrentAmmo(secondWeapon.GetCurrentAmmo());
+            //        break;
+            //    case Weapons.ThirdWeapon:
+            //        break;
+            //    case Weapons.FourthWeapon:
+            //        if (isPlaying == false) StartCoroutine(Grenade());
+            //        break;
+            //}
 
 
 
@@ -96,7 +99,7 @@ public class ThirdPersonShooterController : MonoBehaviour
             //if (hitTransform != null)
             //{
             //    Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
-            
+
             //    var hole = Instantiate(bulletHole, raycastHit.point + raycastHit.normal * 0.001f, Quaternion.identity);
             //    hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
             //    hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
@@ -108,7 +111,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         {
             crosshair.ChangeSizeCrosshairOnNormal();
         }
-        transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+        //transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
         if (starterAssetsInputs.aim)
         {
             if (personFollowComponent.CameraDistance > aimCameraDistance)
@@ -131,25 +134,48 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private void SetWeapon(Weapons weapons)
     {
-        currentWeapon = weapons;
+        //currentWeapon = weapons;
         firstWeapon.gameObject.SetActive(false);
         secondWeapon.gameObject.SetActive(false);
         thirdWeapon.gameObject.SetActive(false);
         prefabGrenade.gameObject.SetActive(false);
-        switch (currentWeapon)
+        switch (weapons)
         {
             case Weapons.FirstWeapon:
                 firstWeapon.gameObject.SetActive(true);
+                //magazineAmmos.SetCountMagazine(firstWeapon.GetAmmoMagazine());
+                //magazineAmmos.SetCurrentAmmo(firstWeapon.GetCurrentAmmo());
+                currentWeapon_v2 = firstWeapon;
                 break;
             case Weapons.SecondWeapon:
                 secondWeapon.gameObject.SetActive(true);
+                //magazineAmmos.SetCountMagazine(secondWeapon.GetAmmoMagazine());
+                //magazineAmmos.SetCurrentAmmo(secondWeapon.GetCurrentAmmo());
+                currentWeapon_v2 = secondWeapon;
                 break;
             case Weapons.ThirdWeapon:
                 thirdWeapon.gameObject.SetActive(true);
+                //magazineAmmos.SetCountMagazine(0);
+                //magazineAmmos.SetCurrentAmmo(0);
+                currentWeapon_v2 = thirdWeapon;
                 break;
             case Weapons.FourthWeapon:
                 prefabGrenade.gameObject.SetActive(true);
+                //magazineAmmos.SetCountMagazine(prefabGrenade.GetAmmoMagazine());
+                //magazineAmmos.SetCurrentAmmo(prefabGrenade.GetCurrentAmmo());
+                currentWeapon_v2 = prefabGrenade;
                 break;
+        }
+        SetAmmoWepon(currentWeapon_v2);
+    }
+
+    private void SetAmmoWepon(BaseWeapon wepon)
+    {
+        if (currentWeapon_v2 is AmmoManager)
+        {
+            var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
+            magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
+            magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetAmmoMagazine());
         }
     }
 
@@ -164,9 +190,6 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private void OnDestroy()
     {
-        starterAssetsInputs.OnFirstWeaponCustom -= SetWeapon;
-        starterAssetsInputs.OnSecondWeaponCustom -= SetWeapon;
-        starterAssetsInputs.OnThirdWeaponCustom -= SetWeapon;
-        starterAssetsInputs.OnFourthWeaponCustom -= SetWeapon;
+        starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
     }
 }

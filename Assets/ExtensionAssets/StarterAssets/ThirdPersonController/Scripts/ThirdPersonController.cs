@@ -71,7 +71,6 @@ namespace StarterAssets
         // player
         private float _speed;
         private float _animationBlend;
-        private float _animationBlendAction;
         private float _animationBlandMove_x;
         private float _animationBlandMove_y;
         private float _targetRotation = 0.0f;
@@ -99,7 +98,6 @@ namespace StarterAssets
         private int _animIDSecondWeapon;
         private int _animIDThirdWeapon;
         private int _animIDFourthWeapon;
-        private int _animIDAction;
         private int _animIDActionShoot;
 
         private Animator _animator;
@@ -112,7 +110,7 @@ namespace StarterAssets
         private bool _hasAnimator;
         private bool isProne;
         private Weapons currentWeapon;
-        private bool isCoroutinesWork;
+        private bool isCoroutinesWorking;
 
 
 
@@ -126,10 +124,7 @@ namespace StarterAssets
             }
             _input = GetComponent<StarterAssetsInputs>();
             _input.OnProneCustom += Prone;
-            _input.OnFirstWeaponCustom += SetWeapon;
-            _input.OnSecondWeaponCustom += SetWeapon;
-            _input.OnThirdWeaponCustom += SetWeapon;
-            _input.OnFourthWeaponCustom += SetWeapon;
+            _input.OnPickWeaponCustom += SetWeapon;
         }
 
         private void Start()
@@ -151,7 +146,7 @@ namespace StarterAssets
             GroundedCheck();
             CrouchLie();
             Move();
-            Shoot();
+            AnimationUseWepon();
             //print("_input.move.x " + _input.move.x);
             //print("_input.move.y " + _input.move.y);
             //print("_input.move.magnitude " + _input.move.magnitude);
@@ -181,7 +176,6 @@ namespace StarterAssets
             _animIDSecondWeapon = Animator.StringToHash("SecondWeapon");
             _animIDThirdWeapon = Animator.StringToHash("ThirdWeapon");
             _animIDFourthWeapon = Animator.StringToHash("FourthWeapon");
-            _animIDAction = Animator.StringToHash("Action");
             _animIDActionShoot = Animator.StringToHash("ActionShoot");
         }
 
@@ -222,7 +216,7 @@ namespace StarterAssets
             if (_input.sprint) targetSpeed = SprintSpeed;
             else targetSpeed = MoveSpeed;
             if (isProne) targetSpeed = ProneSpeed;
-            //targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+  //////////targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -257,14 +251,16 @@ namespace StarterAssets
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
-            {
+  ///////////if (_input.move != Vector2.zero)
+  ///////////{ //Возвращает угол, тангенс которого равен отношению двух указанных чисел.
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            }
+               // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                transform.rotation = Quaternion.Euler(0.0f, _mainCamera.transform.eulerAngles.y, 0.0f);
+               //transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+  ///////////}
 
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
@@ -423,40 +419,32 @@ namespace StarterAssets
             }
         }
 
-        private void Shoot()
+        private void AnimationUseWepon()
         {
             if (_input.shoot)
             {
-                _animationBlendAction = Mathf.Lerp(_animationBlendAction, 1, Time.deltaTime * SpeedChangeRate);
                 if (currentWeapon == Weapons.ThirdWeapon)
                 {
-                    if (!isCoroutinesWork) StartCoroutine(WaitAnim());
+                    if (!isCoroutinesWorking) StartCoroutine(WaitAnimationKnife());
                 }
                 _animator.SetBool(_animIDActionShoot, true);
             }
             else
             {
-                _animationBlendAction = Mathf.Lerp(_animationBlendAction, 0, Time.deltaTime * SpeedChangeRate);
                 _animator.SetBool(_animIDActionShoot, false);
-                //_animator.SetLayerWeight(2, 0);
-            }
-
-            if (_hasAnimator)
-            {
-                _animator.SetFloat(_animIDAction, _animationBlendAction);
             }
         }
-        private IEnumerator WaitAnim()
+        private IEnumerator WaitAnimationKnife()
         {
-            isCoroutinesWork = true;
+            isCoroutinesWorking = true;
             _animator.SetLayerWeight(2, 1);
             yield return new WaitForSeconds(2f);
             _animator.SetLayerWeight(2, 0);
-            isCoroutinesWork = false;
+            isCoroutinesWorking = false;
         }
         private void SetWeapon(Weapons weapons)
         {
-            currentWeapon = weapons; // для работы ножа IEnumerator WaitAnim(), переписать в скрипт ножа!
+            currentWeapon = weapons; // для работы ножа IEnumerator WaitAnimationKnife(), переписать в скрипт ножа!
             _animator.SetBool(_animIDFirstWeapon, false);
             _animator.SetBool(_animIDSecondWeapon, false);
             _animator.SetBool(_animIDThirdWeapon, false);
@@ -481,10 +469,7 @@ namespace StarterAssets
         private void OnDestroy()
         {
             _input.OnProneCustom -= Prone;
-            _input.OnFirstWeaponCustom -= SetWeapon;
-            _input.OnSecondWeaponCustom -= SetWeapon;
-            _input.OnThirdWeaponCustom -= SetWeapon;
-            _input.OnFourthWeaponCustom -= SetWeapon;
+            _input.OnPickWeaponCustom -= SetWeapon;
         }
     }
 }
