@@ -6,15 +6,21 @@ using TMPro;
 public class MagazineAmmos : MonoBehaviour
 {
     [SerializeField] private TMP_Text currentAmmo;
-    [SerializeField] private TMP_Text countMagazine;
+    [SerializeField] private TMP_Text countAmmoTotal;
 
-    public void SetCurrentAmmo(uint currentAmmo)
+    public void SetCurrentAmmo(int currentAmmo)
     {
         this.currentAmmo.text = currentAmmo.ToString();
     }
 
-    public void SetCountMagazine(uint countMagazine)
+    public void SetCountAmmoTotal(int countAmmoTotal)
     {
-        this.countMagazine.text = countMagazine.ToString();
+        this.countAmmoTotal.text = countAmmoTotal.ToString();
+    }
+
+    public void SetEmptyFields()
+    {
+        this.currentAmmo.text = "-";
+        this.countAmmoTotal.text = "-";
     }
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4919148928435157325}
   - component: {fileID: 2070148680541458835}
   m_Layer: 8
-  m_Name: Text_CountMagazine
+  m_Name: Text_CountAmmoTotal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAmmo: {fileID: 7237379061647358252}
-  countMagazine: {fileID: 2070148680541458835}
+  countAmmoTotal: {fileID: 2070148680541458835}
 --- !u!1 &1919745707707951200
 GameObject:
   m_ObjectHideFlags: 0

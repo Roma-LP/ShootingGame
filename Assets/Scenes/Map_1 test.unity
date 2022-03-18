@@ -817,6 +817,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1184168336, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoTotal
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1184168336, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: ammoDamage
       value: 51
       objectReference: {fileID: 0}
@@ -825,8 +829,12 @@ PrefabInstance:
       value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1318177917, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoTotal
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1318177917, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: ammoMagazine
-      value: 20
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 713208049640856588, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: rateOfFire
@@ -840,6 +848,22 @@ PrefabInstance:
       propertyPath: prefabHitPartical
       value: 
       objectReference: {fileID: 1911283446444741033, guid: ab634fb15d053d44094e8b876d44249f, type: 3}
+    - target: {fileID: 2070925443209103313, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: m_Lens.m_SensorSize.x
+      value: 2.3385093
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070925443209103313, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: m_Transitions.m_OnCameraLive.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070925443209103313, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: m_Transitions.m_OnCameraLive.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2070925443209103313, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: m_Transitions.m_OnCameraLive.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_RootOrder
       value: 1

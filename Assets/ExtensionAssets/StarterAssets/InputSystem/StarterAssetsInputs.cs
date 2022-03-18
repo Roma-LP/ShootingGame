@@ -10,6 +10,8 @@ namespace StarterAssets
 	{
 		public event Action OnProneCustom;
 		public event Action<Weapons> OnPickWeaponCustom;
+		public event Action OnReloadWeapon;
+
 
 		[Header("Character Input Values")]
 		public Vector2 move;
@@ -94,6 +96,11 @@ namespace StarterAssets
 		{
 			OnPickWeaponCustom?.Invoke(Weapons.FourthWeapon);
 		}
+
+		public void OnReload(InputValue value)
+        {
+			OnReloadWeapon?.Invoke();
+        }
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif

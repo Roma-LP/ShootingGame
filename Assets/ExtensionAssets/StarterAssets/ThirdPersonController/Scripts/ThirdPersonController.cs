@@ -77,8 +77,6 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-        [SerializeField] private float Sensitivity = 1f;
-        [SerializeField] private bool _rotateOnMove = true;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -111,6 +109,7 @@ namespace StarterAssets
         private bool isProne;
         private Weapons currentWeapon;
         private bool isCoroutinesWorking;
+        private float sensitivityCamera;
 
 
 
@@ -197,8 +196,8 @@ namespace StarterAssets
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
-                _cinemachineTargetYaw += _input.look.x * Time.deltaTime;
-                _cinemachineTargetPitch += _input.look.y * Time.deltaTime;
+                _cinemachineTargetYaw += _input.look.x * Time.deltaTime * sensitivityCamera;
+                _cinemachineTargetPitch += _input.look.y * Time.deltaTime * sensitivityCamera;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -257,9 +256,8 @@ namespace StarterAssets
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-               // transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
                 transform.rotation = Quaternion.Euler(0.0f, _mainCamera.transform.eulerAngles.y, 0.0f);
-               //transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+                //transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
   ///////////}
 
 
@@ -384,15 +382,6 @@ namespace StarterAssets
             Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
         }
 
-        public void SetSensitivity(float newSensitivity)
-        {
-            Sensitivity = newSensitivity;
-        }
-        public void SetRotateOnMove(bool newRotateOnMove)
-        {
-            _rotateOnMove = newRotateOnMove;
-        }
-
         private void CrouchLie()
         {
             if (_input.crouch)
@@ -464,6 +453,11 @@ namespace StarterAssets
                     _animator.SetBool(_animIDFourthWeapon, true);
                     break;
             }
+        }
+
+        public void SetSensitivity(float sensitivity)
+        {
+            sensitivityCamera = sensitivity;
         }
 
         private void OnDestroy()
