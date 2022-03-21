@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -7,13 +8,18 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
+		public event Action OnProneCustom;
+		public event Action<Weapons> OnPickWeaponCustom;
+		public event Action OnReloadWeapon;
+
+
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
 		public bool crouch;
-		public bool liedown;
+		public bool prone;
 		public bool aim;
 		public bool shoot;
 
@@ -56,9 +62,10 @@ namespace StarterAssets
 			CrouchInput(value.isPressed);
 		}
 
-		public void OnLieDown(InputValue value)
+		public void OnProne(InputValue value)
 		{
-			LieDownInput(value.isPressed);
+			OnProneCustom?.Invoke();
+			//ProneInput(value.isPressed);
 		}
 
 		public void OnAim(InputValue value)
@@ -69,6 +76,31 @@ namespace StarterAssets
 		{
 			ShootInput(value.isPressed);
 		}
+
+		public void OnFirstWeapon(InputValue value)
+        {
+			OnPickWeaponCustom?.Invoke(Weapons.FirstWeapon);
+        }
+
+		public void OnSecondWeapon(InputValue value)
+		{
+			OnPickWeaponCustom?.Invoke(Weapons.SecondWeapon);
+		}
+
+		public void OnThirdWeapon(InputValue value)
+		{
+			OnPickWeaponCustom?.Invoke(Weapons.ThirdWeapon);
+		}
+
+		public void OnFourthWeapon(InputValue value)
+		{
+			OnPickWeaponCustom?.Invoke(Weapons.FourthWeapon);
+		}
+
+		public void OnReload(InputValue value)
+        {
+			OnReloadWeapon?.Invoke();
+        }
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -99,9 +131,9 @@ namespace StarterAssets
 			crouch = newCrouchState;
 		}
 
-		public void LieDownInput(bool newLieDownState)
+		public void ProneInput(bool newProneState)
 		{
-			liedown = newLieDownState;
+			prone = newProneState;
 		}
 
 		public void AimInput(bool newAimState)

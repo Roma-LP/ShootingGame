@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -15,6 +16,8 @@ namespace StarterAssets
     public class ThirdPersonController : MonoBehaviour
     {
         [Header("Player")]
+        [Tooltip("Prone speed of the character in m/s")]
+        public float ProneSpeed = 2.0f;
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
         [Tooltip("Sprint speed of the character in m/s")]
@@ -59,6 +62,8 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        public Weapons CurrentWeapon { get { return currentWeapon; } }
+
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -66,12 +71,12 @@ namespace StarterAssets
         // player
         private float _speed;
         private float _animationBlend;
+        private float _animationBlandMove_x;
+        private float _animationBlandMove_y;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
-        [SerializeField]private float Sensitivity = 1f;
-        [SerializeField]private bool _rotateOnMove = true;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -84,9 +89,14 @@ namespace StarterAssets
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
         private int _animIDCrouch;
-        private int _animIDLie;
+        private int _animIDProne;
         private int _animIDmoove_x;
         private int _animIDmoove_y;
+        private int _animIDFirstWeapon;
+        private int _animIDSecondWeapon;
+        private int _animIDThirdWeapon;
+        private int _animIDFourthWeapon;
+        private int _animIDActionShoot;
 
         private Animator _animator;
         private CharacterController _controller;
@@ -96,21 +106,30 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private bool isProne;
+        private Weapons currentWeapon;
+        private bool isCoroutinesWorking;
+        private float sensitivityCamera;
+
+
 
         private void Awake()
         {
+            currentWeapon = Weapons.FirstWeapon;
             // get a reference to our main camera
             if (_mainCamera == null)
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+            _input = GetComponent<StarterAssetsInputs>();
+            _input.OnProneCustom += Prone;
+            _input.OnPickWeaponCustom += SetWeapon;
         }
 
         private void Start()
         {
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
-            _input = GetComponent<StarterAssetsInputs>();
             AssignAnimationIDs();
 
             // reset our timeouts on start
@@ -126,9 +145,13 @@ namespace StarterAssets
             GroundedCheck();
             CrouchLie();
             Move();
-
-            print("_input.move.x" + _input.move.x);
-            print("_input.move.y" + _input.move.y);
+            AnimationUseWepon();
+            //print("_input.move.x " + _input.move.x);
+            //print("_input.move.y " + _input.move.y);
+            //print("_input.move.magnitude " + _input.move.magnitude);
+            //print("_controller.velocity.x " + _controller.velocity.x);
+            //print("_controller.velocity.y " + _controller.velocity.y);
+            //print("_controller.velocity.z " + _controller.velocity.z);
         }
 
         private void LateUpdate()
@@ -143,11 +166,16 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-            _animIDCrouch = Animator.StringToHash("Crouch");
-            _animIDLie = Animator.StringToHash("Lie");
 
+            _animIDCrouch = Animator.StringToHash("Crouch");
+            _animIDProne = Animator.StringToHash("Prone");
             _animIDmoove_x = Animator.StringToHash("move_x");
             _animIDmoove_y = Animator.StringToHash("move_y");
+            _animIDFirstWeapon = Animator.StringToHash("FirstWeapon");
+            _animIDSecondWeapon = Animator.StringToHash("SecondWeapon");
+            _animIDThirdWeapon = Animator.StringToHash("ThirdWeapon");
+            _animIDFourthWeapon = Animator.StringToHash("FourthWeapon");
+            _animIDActionShoot = Animator.StringToHash("ActionShoot");
         }
 
         private void GroundedCheck()
@@ -168,8 +196,8 @@ namespace StarterAssets
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
             {
-                _cinemachineTargetYaw += _input.look.x * Time.deltaTime;
-                _cinemachineTargetPitch += _input.look.y * Time.deltaTime;
+                _cinemachineTargetYaw += _input.look.x * Time.deltaTime * sensitivityCamera;
+                _cinemachineTargetPitch += _input.look.y * Time.deltaTime * sensitivityCamera;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -183,14 +211,18 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed;
+            if (_input.sprint) targetSpeed = SprintSpeed;
+            else targetSpeed = MoveSpeed;
+            if (isProne) targetSpeed = ProneSpeed;
+  //////////targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
             if (_input.move == Vector2.zero) targetSpeed = 0.0f;
-            
+
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
@@ -218,39 +250,44 @@ namespace StarterAssets
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
-            {
+  ///////////if (_input.move != Vector2.zero)
+  ///////////{ //Возвращает угол, тангенс которого равен отношению двух указанных чисел.
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _mainCamera.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            }
-             
+                transform.rotation = Quaternion.Euler(0.0f, _mainCamera.transform.eulerAngles.y, 0.0f);
+                //transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+  ///////////}
+
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
+            float target_x = 0;
+            float target_y = 0;
+            if (_input.move != Vector2.zero)
+            {
+                target_x = _input.move.x;
+                target_y = _input.move.y;
+            }
+            else
+            {
+                target_x = 0;
+                target_y = 0;
+            }
             // update animator if using character
+            _animationBlandMove_x = Mathf.Lerp(_animationBlandMove_x, target_x, Time.deltaTime * SpeedChangeRate);
+            _animationBlandMove_y = Mathf.Lerp(_animationBlandMove_y, target_y, Time.deltaTime * SpeedChangeRate);
+            //print("_animationBlend " +_animationBlend);
             if (_hasAnimator)
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-                _animator.SetFloat(_animIDmoove_x, _input.move.x);
-                _animator.SetFloat(_animIDmoove_y, _input.move.y);
-            }
-        }
-        private void CrouchLie()
-        {
-            if (_input.crouch)
-            {
-                _animator.SetBool(_animIDCrouch, true);
-            }
-            else
-            {
-                _animator.SetBool(_animIDCrouch, false);
+                _animator.SetFloat(_animIDmoove_x, _animationBlandMove_x);
+                _animator.SetFloat(_animIDmoove_y, _animationBlandMove_y);
             }
         }
 
@@ -284,6 +321,9 @@ namespace StarterAssets
                     if (_hasAnimator)
                     {
                         _animator.SetBool(_animIDJump, true);
+                        _animator.SetBool(_animIDCrouch, false);
+                        _animator.SetBool(_animIDProne, false);
+                        isProne = false;
                     }
                 }
 
@@ -342,14 +382,96 @@ namespace StarterAssets
             Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z), GroundedRadius);
         }
 
-
-        public void SetSensitivity(float newSensitivity)
+        private void CrouchLie()
         {
-            Sensitivity = newSensitivity;
+            if (_input.crouch)
+            {
+                _animator.SetBool(_animIDCrouch, true);
+            }
+            else
+            {
+                _animator.SetBool(_animIDCrouch, false);
+            }
         }
-        public void SetRotateOnMove(bool newRotateOnMove)
+
+        private void Prone()
         {
-            _rotateOnMove = newRotateOnMove;
+            if (isProne)
+            {
+                _animator.SetBool(_animIDProne, false);
+                isProne = false;
+            }
+            else
+            {
+                _animator.SetBool(_animIDProne, true);
+                isProne = true;
+            }
+        }
+
+        private void AnimationUseWepon()
+        {
+            if (_input.shoot)
+            {
+                if (currentWeapon == Weapons.ThirdWeapon)
+                {
+                    if (!isCoroutinesWorking) StartCoroutine(WaitAnimationKnife());
+                }
+                _animator.SetBool(_animIDActionShoot, true);
+            }
+            else
+            {
+                _animator.SetBool(_animIDActionShoot, false);
+            }
+        }
+        private IEnumerator WaitAnimationKnife()
+        {
+            isCoroutinesWorking = true;
+            _animator.SetLayerWeight(2, 1);
+            yield return new WaitForSeconds(2f);
+            _animator.SetLayerWeight(2, 0);
+            isCoroutinesWorking = false;
+        }
+        private void SetWeapon(Weapons weapons)
+        {
+            currentWeapon = weapons; // для работы ножа IEnumerator WaitAnimationKnife(), переписать в скрипт ножа!
+            _animator.SetBool(_animIDFirstWeapon, false);
+            _animator.SetBool(_animIDSecondWeapon, false);
+            _animator.SetBool(_animIDThirdWeapon, false);
+            _animator.SetBool(_animIDFourthWeapon, false);
+            switch (weapons)
+            {
+                case Weapons.FirstWeapon:
+                    _animator.SetBool(_animIDFirstWeapon, true);
+                    break;
+                case Weapons.SecondWeapon:
+                    _animator.SetBool(_animIDSecondWeapon, true);
+                    break;
+                case Weapons.ThirdWeapon:
+                    _animator.SetBool(_animIDThirdWeapon, true);
+                    break;
+                case Weapons.FourthWeapon:
+                    _animator.SetBool(_animIDFourthWeapon, true);
+                    break;
+            }
+        }
+
+        public void SetSensitivity(float sensitivity)
+        {
+            sensitivityCamera = sensitivity;
+        }
+
+        private void OnDestroy()
+        {
+            _input.OnProneCustom -= Prone;
+            _input.OnPickWeaponCustom -= SetWeapon;
         }
     }
+}
+
+public enum Weapons
+{
+    FirstWeapon,
+    SecondWeapon,
+    ThirdWeapon,
+    FourthWeapon,
 }
