@@ -1,4 +1,5 @@
 using Cinemachine;
+using Photon.Pun;
 using StarterAssets;
 using System.Collections;
 using UnityEngine;
@@ -30,10 +31,12 @@ public class ThirdPersonShooterController : MonoBehaviour
     private Vector2 screenCenterPoint;
     private Ray ray;
     private BaseWeapon currentWeapon_v2;
+    private PhotonView PV;
 
 
     private void Awake()
     {
+        PV = GetComponent<PhotonView>();
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
         currentWeapon_v2 = firstWeapon;

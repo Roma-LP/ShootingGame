@@ -1,19 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using System;
 
-[CreateAssetMenu(fileName = "MapIconStore", menuName = "MapIcon")]
-public class MapIconsStore : ScriptableObject
+public enum MapType
 {
-    [SerializeField] private MapIcon[] mapIcons;
+    Dust2, Mirage, Inferno
+}
 
-    public MapIcon[] MapIcons { get => mapIcons; }
-
-    [Serializable]
-    public class MapIcon
-    {
-        public string mapName;
-        public Sprite iconSprite;
-    }
+[CreateAssetMenu(fileName = "MapIconStore", menuName = "Stores/MapIcon")]
+public class MapIconsStore : Store<MapType>
+{
+    
 }

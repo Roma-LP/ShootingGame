@@ -230,6 +230,9 @@ MonoBehaviour:
   mapName: {fileID: 292792616535022089}
   mapIcon: {fileID: 3188478227383234618}
   iconsStore: {fileID: 11400000, guid: a30792f6eb1feb2468a14890aece4598, type: 2}
+  arrows:
+  - {fileID: 3188478226895934640}
+  - {fileID: 3188478226610134433}
 --- !u!1 &3188478226610134433
 GameObject:
   m_ObjectHideFlags: 0
