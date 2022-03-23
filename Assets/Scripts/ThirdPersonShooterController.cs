@@ -63,10 +63,17 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
-            currentWeapon_v2.UseWepon(ray);
+            if (currentWeapon_v2 is Grenade)
+            {
+                if (isPlaying == false) StartCoroutine(Grenade());
+            }
+            else
+            {
+                currentWeapon_v2.UseWepon(ray);
+                crosshair.ChangeSizeCrosshairOnShoot();
+            }
             SetAmmoWeapon();
-            crosshair.ChangeSizeCrosshairOnShoot();
-         
+
 
             //if (thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
             //{
@@ -140,6 +147,13 @@ public class ThirdPersonShooterController : MonoBehaviour
             var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
             magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
             magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
+            if (currentWeapon_v2 is Grenade)
+            {
+                if (ammoManagerWeapon.GetCurrentAmmo() != 0)
+                {
+                    prefabGrenade.gameObject.SetActive(true);
+                }
+            }
         }
         else
         {
@@ -162,7 +176,8 @@ public class ThirdPersonShooterController : MonoBehaviour
         isPlaying = true;
         Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
         grenade.Throw(ray.direction * forceThrow);
-        yield return new WaitForSeconds(1.5f);
+        prefabGrenade.gameObject.SetActive(false);
+        yield return new WaitForSeconds(1.3f);
         isPlaying = false;
     }
 

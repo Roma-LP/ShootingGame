@@ -104,7 +104,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9023738284008932032
 Transform:
   m_ObjectHideFlags: 0
@@ -300,7 +300,6 @@ MonoBehaviour:
   audioClipExplosion: {fileID: 0}
   prefabHitPartical: {fileID: 0}
   prefabBulletHole: {fileID: 0}
-  ammoMagazine: 4
   ammoTotal: 4
   timeToExplosion: 5
   smokePrefab: {fileID: 4954595265455955032, guid: b93a9390138b8204883855d7dfdadac6, type: 3}

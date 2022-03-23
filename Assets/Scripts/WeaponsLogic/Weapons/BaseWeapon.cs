@@ -27,6 +27,11 @@ public abstract class BaseWeapon : MonoBehaviour
         }
     } 
 
+    protected virtual void Shot()
+    {
+
+    }
+
     private IEnumerator UsingWeapon(Ray raycast)
     {
         isUsingWeapon = true;
@@ -41,6 +46,7 @@ public abstract class BaseWeapon : MonoBehaviour
         hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
         hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
         hole.transform.Rotate(new Vector3(0, 0, 0));
+        Shot();
         yield return new WaitForSeconds(rateOfFire);
         isUsingWeapon = false;
     }
