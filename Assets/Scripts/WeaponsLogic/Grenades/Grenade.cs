@@ -13,11 +13,16 @@ public abstract class Grenade : AmmoManager
 
     public void Throw(Vector3 direction)  // будет private
     {
-        body.isKinematic = false;
-        body.useGravity = true;
-        body.AddForce(direction);
-        StartCoroutine(Throwing());
+        //Shot();
+       
+            body.isKinematic = false;
+            body.useGravity = true;
+            body.AddForce(direction);
+            StartCoroutine(Throwing());
+        
     }
+
+    public void kek() => currentAmmo--; // rename?
 
     protected Rigidbody body;
 
@@ -33,5 +38,10 @@ public abstract class Grenade : AmmoManager
     {
         //Throw(ray.direction * forceThrow);
         Throw(ray.direction);
+    }
+
+    public override void ReloadCurrentWeapon()
+    {
+        return;
     }
 }

@@ -147,13 +147,6 @@ public class ThirdPersonShooterController : MonoBehaviour
             var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
             magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
             magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
-            if (currentWeapon_v2 is Grenade)
-            {
-                if (ammoManagerWeapon.GetCurrentAmmo() != 0)
-                {
-                    prefabGrenade.gameObject.SetActive(true);
-                }
-            }
         }
         else
         {
@@ -174,10 +167,17 @@ public class ThirdPersonShooterController : MonoBehaviour
     IEnumerator Grenade()
     {
         isPlaying = true;
+        var x = currentWeapon_v2 as Grenade;
+        if (!x.CheckCountAmmo()) yield break;
+        x.kek();
         Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
         grenade.Throw(ray.direction * forceThrow);
         prefabGrenade.gameObject.SetActive(false);
         yield return new WaitForSeconds(1.3f);
+        if (x.GetCurrentAmmo() != 0)
+        {
+            prefabGrenade.gameObject.SetActive(true);
+        }
         isPlaying = false;
     }
 

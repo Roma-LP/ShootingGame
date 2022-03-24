@@ -3,21 +3,21 @@ using UnityEngine;
 
 public abstract class AmmoManager : BaseWeapon
 {
+    [SerializeField, Min(0f)] protected int currentAmmo = 30;
     [SerializeField, Min(0f)] protected int ammoMagazine = 30;
     [SerializeField, Min(0f)] protected int ammoTotal = 90;
-
-    protected int currentAmmo;
 
     private int needAmmo;
 
     private void Awake()
     {
-        currentAmmo = ammoMagazine;
+       // currentAmmo = ammoMagazine;
+        print("currentAmmo - " + currentAmmo + "   kek");
     }
 
-    private bool CheckCountAmmo()
+    public bool CheckCountAmmo() // protected
     {
-        return currentAmmo == 0 ? false : true; 
+        return currentAmmo == 0 ? false : true;
     }
 
     protected override void Shot()
@@ -33,8 +33,9 @@ public abstract class AmmoManager : BaseWeapon
         }
     }
 
-    public void ReloadCurrentWeapon()
+    public virtual void ReloadCurrentWeapon()
     {
+        //if (ammoMagazine == 0) return; // for grenade
         needAmmo = ammoMagazine - currentAmmo;
         if (ammoMagazine <= ammoTotal)
         {
@@ -43,7 +44,7 @@ public abstract class AmmoManager : BaseWeapon
         }
         else
         {
-            if(ammoTotal - needAmmo > 0)
+            if (ammoTotal - needAmmo > 0)
             {
                 ammoTotal = ammoTotal - needAmmo;
                 currentAmmo = ammoMagazine;

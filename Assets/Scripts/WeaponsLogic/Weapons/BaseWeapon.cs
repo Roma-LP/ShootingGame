@@ -12,12 +12,13 @@ public abstract class BaseWeapon : MonoBehaviour
 
     private bool isUsingWeapon;
     private AudioSource audioSource;
+    
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
     }
-
+   
     public virtual void UseWepon(Ray raycast)
     {
         if (!isUsingWeapon)

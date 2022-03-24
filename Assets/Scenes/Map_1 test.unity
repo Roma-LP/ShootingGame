@@ -652,6 +652,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1052228460, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoTotal
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052228460, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoDamage
+      value: 54.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052228460, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: rateOfFire
+      value: 0.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052228460, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: currentAmmo
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1052228460, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoMagazine
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1184168336, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: currentAmmo
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 1495660503, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -1005,8 +1029,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9033141002321205586, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
-      propertyPath: ammoMagazine
+      propertyPath: currentAmmo
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9033141002321205586, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: ammoMagazine
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9033141002321205587, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_UseGravity
