@@ -15,10 +15,7 @@ public abstract class AmmoManager : BaseWeapon
         print("currentAmmo - " + currentAmmo + "   kek");
     }
 
-    public bool CheckCountAmmo() // protected
-    {
-        return currentAmmo == 0 ? false : true;
-    }
+    public bool CanShoot => currentAmmo == 0;
 
     protected override void Shot()
     {
@@ -27,7 +24,7 @@ public abstract class AmmoManager : BaseWeapon
 
     public override void UseWepon(Ray ray)
     {
-        if (CheckCountAmmo())
+        if (CanShoot)
         {
             base.UseWepon(ray);
         }

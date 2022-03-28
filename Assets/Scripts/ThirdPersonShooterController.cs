@@ -168,7 +168,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         isPlaying = true;
         var x = currentWeapon_v2 as Grenade;
-        if (!x.CheckCountAmmo()) yield break;
+        if (!x.CanShoot) yield break;
         x.kek();
         Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
         grenade.Throw(ray.direction * forceThrow);
