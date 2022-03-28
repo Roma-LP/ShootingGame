@@ -42,7 +42,7 @@ public class MapItemRoom : MonoBehaviour
 
     private void SetCurrentMapByIndex()
     {
-        mapIcon.sprite = iconsStore[currentIndex].iconSprite;
+        mapIcon.sprite = iconsStore[currentIndex].value;
         mapName.text = iconsStore[currentIndex].enumValue.ToString();
         if (PhotonNetwork.CurrentRoom != null)
         {
@@ -56,6 +56,6 @@ public class MapItemRoom : MonoBehaviour
     {
         currentIndex = iconsStore.GetIndexByEnum(map);
         mapName.text = map.ToString();
-        mapIcon.sprite = iconsStore[currentIndex].iconSprite;
+        mapIcon.sprite = iconsStore[currentIndex].value;
     }
 }

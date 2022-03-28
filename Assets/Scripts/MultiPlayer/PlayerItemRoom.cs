@@ -55,7 +55,7 @@ public class PlayerItemRoom : MonoBehaviour
     {
         int index = charactersIcon.GetIndexByEnum(character);
         typeOfCharacter.text = character.ToString();
-        iconCharacter.sprite = charactersIcon[index].iconSprite;
+        iconCharacter.sprite = charactersIcon[index].value;
     }
 
     public void OnClickChooseCharacter()

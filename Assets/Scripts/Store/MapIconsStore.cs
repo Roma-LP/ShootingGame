@@ -10,7 +10,7 @@ public enum MapType
 }
 
 [CreateAssetMenu(fileName = "MapIconStore", menuName = "Stores/MapIcon")]
-public class MapIconsStore : Store<MapType>
+public class MapIconsStore : Store<MapType, Sprite>
 {
     
 }

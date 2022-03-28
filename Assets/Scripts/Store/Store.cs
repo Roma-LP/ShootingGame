@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public abstract class Store<T> : ScriptableObject
+public abstract class Store<T, U> : ScriptableObject
 {
-    [SerializeField] private StoreElement[] storeElements;
+    [SerializeField, ArrayElementTitle("enumValue")] private StoreElement[] storeElements;
 
     public StoreElement this[int index]
     {
@@ -21,6 +21,6 @@ public abstract class Store<T> : ScriptableObject
     public class StoreElement
     {
         public T enumValue;
-        public Sprite iconSprite;
+        public U value;
     }
 }

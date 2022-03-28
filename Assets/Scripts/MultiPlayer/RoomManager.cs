@@ -38,7 +38,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     private bool HasUnselectedTeams(out IEnumerable<Team> selectedTeams, out IEnumerable<Team> unselectedTeams)
     {
         List<Team> teams = new List<Team>(Enum.GetNames(typeof(Team)).Select(t => new { team = (Team)Enum.Parse(typeof(Team), t) }).Select(t => t.team));
-        selectedTeams = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Select(t => (Team)Enum.Parse(typeof(Team), (string)t.CustomProperties["Team"]));
+        selectedTeams = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Select(t => t.CustomProperties.GetEnumInProperties<Team>("Team"));
         unselectedTeams = teams.Except(selectedTeams);
         return unselectedTeams.Count() != 0;
     }
@@ -108,7 +108,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             if (!player.Value.CustomProperties.ContainsKey("Team"))
                 continue;
-            Team team = (Team)Enum.Parse(typeof(Team), (string)player.Value.CustomProperties["Team"]);
+            Team team = player.Value.CustomProperties.GetEnumInProperties<Team>("Team");
             PlayerItemRoom newPlayerItem = Instantiate(playerItemRoomPref, teamPanels.First(t => t.Team == team).transform);
             newPlayerItem.IniPlayer(player.Value.NickName, player.Value);
             playersItemsList.Add(newPlayerItem);
@@ -143,7 +143,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
         if (propertiesThatChanged.ContainsKey("MapName"))
         {
-            MapType map = (MapType)Enum.Parse(typeof(MapType), (string)propertiesThatChanged["MapName"]);
+            MapType map = propertiesThatChanged.GetEnumInProperties<MapType>("MapName");
             mapItem.SetMap(map);
         }
         if (propertiesThatChanged.ContainsKey("Creator"))
@@ -162,23 +162,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (changedProps.ContainsKey("Character"))
         {
             var playerTab = playersItemsList.First(t => t.Player == targetPlayer);
-            playerTab.SetCharacter((CharacterType)Enum.Parse(typeof(CharacterType), (string)changedProps["Character"]));
+            playerTab.SetCharacter(changedProps.GetEnumInProperties<CharacterType>("Character"));
         }
         if (changedProps.ContainsKey("IsReady"))
         {
             var players = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value);
             var playerTab = playersItemsList.First(t => t.Player == targetPlayer);
-            playerTab.SetPlayerReady(bool.Parse((string)changedProps["IsReady"]));
-            playButton.SetActive(PhotonNetwork.IsMasterClient
-                && !HasUnselectedTeams()
-                && PhotonNetwork.CurrentRoom.Players.All(t => bool.Parse((string)t.Value.CustomProperties["IsReady"])));
+            playerTab.SetPlayerReady(changedProps.GetBoolInProperties("IsReady"));
+            //playButton.SetActive(PhotonNetwork.IsMasterClient
+            //    && !HasUnselectedTeams()
+            //    && PhotonNetwork.CurrentRoom.Players.All(t => t.Value.CustomProperties.GetBoolInProperties("IsReady")));
+            playButton.SetActive(true);
         }
     }
 
     public void ChangeTeam(int team)
     {
         Team selectedTeam = (Team)team;
-        int playersCount = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Where(t => (Team)(Enum.Parse(typeof(Team), (string)t.CustomProperties["Team"])) == selectedTeam).Count();
+        int playersCount = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Where(t => t.CustomProperties.GetEnumInProperties<Team>("Team") == selectedTeam).Count();
         if (playersCount < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
         {
             var prop = PhotonNetwork.LocalPlayer.CustomProperties;

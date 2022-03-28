@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storeElements:
   - enumValue: 0
-    iconSprite: {fileID: 21300000, guid: ca6ff084116929e41a747403f15f808e, type: 3}
+    value: {fileID: 21300000, guid: 9c3d15adfbc21d64683a6553e1330d99, type: 3}
   - enumValue: 1
-    iconSprite: {fileID: 21300000, guid: e79549f1ff9d02e49aec7ac82e66592a, type: 3}
+    value: {fileID: 21300000, guid: 8b93523f32be16548bf56b5a6db4fefe, type: 3}
   - enumValue: 2
-    iconSprite: {fileID: 21300000, guid: 23772e19474d2c443b3be8361065a7b1, type: 3}
+    value: {fileID: 21300000, guid: 841ae3188ba4d9746ba4f4ed86597a98, type: 3}
