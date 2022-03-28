@@ -1,55 +1,59 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class AmmoManager : BaseWeapon
 {
-    private int currentAmmo;
+    [SerializeField, Min(0f)] protected int currentAmmo = 30;
+    [SerializeField, Min(0f)] protected int ammoMagazine = 30;
+    [SerializeField, Min(0f)] protected int ammoTotal = 90;
 
-    [SerializeField, Range(1f, 60f)] protected int ammoMagazine = 30;
-    [SerializeField, Range(1f, 90f)] protected int ammoTotal = 90;
-
+    private int needAmmo;
 
     private void Awake()
     {
-        currentAmmo = ammoMagazine;
+       // currentAmmo = ammoMagazine;
+        print("currentAmmo - " + currentAmmo + "   kek");
     }
 
-    protected bool CheckCountAmmo()
+    public bool CanShoot => currentAmmo == 0;
+
+    protected override void Shot()
     {
-        if (currentAmmo == 0 || ammoTotal == 0)
-            return false;
-        else
+        currentAmmo--;
+    }
+
+    public override void UseWepon(Ray ray)
+    {
+        if (CanShoot)
         {
-            currentAmmo--;
-            return true;
+            base.UseWepon(ray);
         }
     }
 
-    public void ReloadCurrentWeapon()
+    public virtual void ReloadCurrentWeapon()
     {
+        //if (ammoMagazine == 0) return; // for grenade
+        needAmmo = ammoMagazine - currentAmmo;
         if (ammoMagazine <= ammoTotal)
         {
-            ammoTotal = ammoTotal - (ammoMagazine - currentAmmo);
+            ammoTotal = ammoTotal - needAmmo;
             currentAmmo = ammoMagazine;
         }
         else
         {
-            ammoTotal = ammoTotal - (ammoMagazine - currentAmmo);
-            if (ammoTotal < 0)
+            if (ammoTotal - needAmmo > 0)
             {
+                ammoTotal = ammoTotal - needAmmo;
                 currentAmmo = ammoMagazine;
-                currentAmmo = currentAmmo - ammoTotal;
-                ammoTotal = 0;
             }
             else
             {
-                currentAmmo = ammoMagazine;
+                currentAmmo = currentAmmo + ammoTotal;
+                ammoTotal = 0;
             }
         }
     }
-    public int GetCurrentAmmo() => currentAmmo;
-    public int GetAmmoTotal() => ammoTotal;
 
+    public int GetAmmoTotal() => ammoTotal;
+    public int GetCurrentAmmo() => currentAmmo;
 }
