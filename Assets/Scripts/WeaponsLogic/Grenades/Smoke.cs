@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-public class Smoke : Grenade
+public class Smoke : ThrowingGrenade
 {
-    [SerializeField] private ParticleSystem smokePrefab;
+    [SerializeField] private ParticleSystem smokeParticlePrefab;
     [SerializeField] private float minVelocity = 0.01f;
     [SerializeField] private float lifeSmoke;
 
@@ -20,11 +20,12 @@ public class Smoke : Grenade
 
     protected override IEnumerator Explosion()
     {
-        var smoke = Instantiate(smokePrefab, transform.position, Quaternion.identity);
+        var smoke = Instantiate(smokeParticlePrefab, transform.position, Quaternion.identity);
         var smokePartickeSystem = smoke.main;
         smokePartickeSystem.duration = lifeSmoke * smokePartickeSystem.simulationSpeed - smokePartickeSystem.startLifetimeMultiplier;
         smoke.Play();
         yield return new WaitForSeconds(lifeSmoke);
+        //Destroy(smoke);
         Destroy(gameObject);
     }
 }

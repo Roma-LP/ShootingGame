@@ -19,7 +19,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private Firearms firstWeapon;
     [SerializeField] private Firearms secondWeapon;
     [SerializeField] private ColdWeapon thirdWeapon;
-    [SerializeField] private Grenade prefabGrenade;
+    [SerializeField] private GrenadeManager prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
 
@@ -63,16 +63,21 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
-            if (currentWeapon_v2 is Grenade)
-            {
-                if (isPlaying == false) StartCoroutine(Grenade());
-            }
-            else
-            {
-                currentWeapon_v2.UseWepon(ray);
-                crosshair.ChangeSizeCrosshairOnShoot();
-            }
+            currentWeapon_v2.UseWepon(ray);
+            crosshair.ChangeSizeCrosshairOnShoot();
             SetAmmoWeapon();
+
+
+            //if (currentWeapon_v2 is Grenade)
+            //{
+            //    if (isPlaying == false) StartCoroutine(Grenade());
+            //}
+            //else
+            //{
+            //    currentWeapon_v2.UseWepon(ray);
+            //    crosshair.ChangeSizeCrosshairOnShoot();
+            //}
+            //SetAmmoWeapon();
 
 
             //if (thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
@@ -117,7 +122,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         firstWeapon.gameObject.SetActive(false);
         secondWeapon.gameObject.SetActive(false);
         thirdWeapon.gameObject.SetActive(false);
-        prefabGrenade.gameObject.SetActive(false);
+        //prefabGrenade.gameObject.SetActive(false);
         switch (weapons)
         {
             case Weapons.FirstWeapon:
@@ -133,7 +138,7 @@ public class ThirdPersonShooterController : MonoBehaviour
                 currentWeapon_v2 = thirdWeapon;
                 break;
             case Weapons.FourthWeapon:
-                prefabGrenade.gameObject.SetActive(true);
+               // prefabGrenade.gameObject.SetActive(true);
                 currentWeapon_v2 = prefabGrenade;
                 break;
         }
@@ -142,44 +147,67 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private void SetAmmoWeapon()
     {
-        if (currentWeapon_v2 is AmmoManager)
+        switch (currentWeapon_v2)
         {
-            var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
-            magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
-            magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
+            case AmmoManagerFirearms:
+                {
+                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
+                    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
+                    magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
+                    break;
+                }
+            case AmmoManagerGrenade:
+                {
+                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerGrenade;
+                    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
+                    break;
+                }
+            default:
+                {
+                    magazineAmmos.SetEmptyFields();
+                    break;
+                }
         }
-        else
-        {
-            magazineAmmos.SetEmptyFields();
-        }
+
+
+        //if (currentWeapon_v2 is AmmoManagerFirearms)
+        //{
+        //    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
+        //    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
+        //    magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
+        //}
+        //else
+        //{
+        //    magazineAmmos.SetEmptyFields();
+        //}
     }
 
     private void ReloadWeapon()
     {
-        if (currentWeapon_v2 is AmmoManager)
+        if (currentWeapon_v2 is AmmoManagerFirearms)
         {
-            var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
+            var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
             ammoManagerWeapon.ReloadCurrentWeapon();
             SetAmmoWeapon();
         }
     }
 
-    IEnumerator Grenade()
-    {
-        isPlaying = true;
-        var x = currentWeapon_v2 as Grenade;
-        if (!x.CheckCountAmmo()) yield break;
-        x.kek();
-        Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
-        grenade.Throw(ray.direction * forceThrow);
-        prefabGrenade.gameObject.SetActive(false);
-        yield return new WaitForSeconds(1.3f);
-        if (x.GetCurrentAmmo() != 0)
-        {
-            prefabGrenade.gameObject.SetActive(true);
-        }
-        isPlaying = false;
-    }
+    //IEnumerator Grenade()
+    //{
+    //    isPlaying = true;
+    //    var x = currentWeapon_v2 as Grenade;
+    //    if (!x.CheckCountAmmo()) yield break;
+    //    x.kek();
+    //    Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
+    //    grenade.Throw(ray.direction * forceThrow);
+    //    prefabGrenade.gameObject.SetActive(false);
+    //    yield return new WaitForSeconds(1.3f);
+    //    if (x.GetCurrentAmmo() != 0)
+    //    {
+    //        prefabGrenade.gameObject.SetActive(true);
+    //    }
+    //    isPlaying = false;
+    //}
 
     private void OnDestroy()
     {

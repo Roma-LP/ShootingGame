@@ -465,7 +465,21 @@ namespace StarterAssets
             _input.OnProneCustom -= Prone;
             _input.OnPickWeaponCustom -= SetWeapon;
         }
+        //////////////////////////////////////////////   TESTS    //////////////////////////////////////////////////////////
+        public NewBehaviourScript newBehaviourScript;
+        private void OnTestButton()
+        {
+            if (newBehaviourScript.CalculateExplosure())
+                print("flashed");
+            else
+                print("unflashed");
+
+            corotin.UseWepon();
+        }
+
+        public corotin corotin;
     }
+
 }
 
 public enum Weapons

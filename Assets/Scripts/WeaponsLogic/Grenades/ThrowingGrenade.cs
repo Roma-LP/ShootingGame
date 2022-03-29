@@ -1,11 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public abstract class Grenade : AmmoManagerGrenade
+public abstract class ThrowingGrenade : MonoBehaviour
 {
     [SerializeField, Range(1f, 10f)] protected float timeToExplosion;
-    //[SerializeField, Min(1f)] protected float forceThrow;
+
+    protected Rigidbody body;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -13,18 +16,12 @@ public abstract class Grenade : AmmoManagerGrenade
 
     public void Throw(Vector3 direction)  // будет private
     {
-        //Shot();
-       
-            body.isKinematic = false;
-            body.useGravity = true;
-            body.AddForce(direction);
-            StartCoroutine(Throwing());
-        
+        //body.isKinematic = false;
+       // body.useGravity = true;
+        body.AddForce(direction);
+        StartCoroutine(Throwing());
     }
 
-    public void kek() => currentAmmo--; // rename?
-
-    protected Rigidbody body;
 
     protected virtual IEnumerator Throwing()
     {
@@ -33,10 +30,4 @@ public abstract class Grenade : AmmoManagerGrenade
         StartCoroutine(Explosion());
     }
     protected abstract IEnumerator Explosion();
-
-    public override void UseWepon(Ray ray)
-    {
-        //Throw(ray.direction * forceThrow);
-        Throw(ray.direction);
-    }
 }
