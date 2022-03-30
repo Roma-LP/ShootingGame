@@ -22,6 +22,7 @@ namespace StarterAssets
 		public bool prone;
 		public bool aim;
 		public bool shoot;
+		public bool tab;
 
 
 		[Header("Movement Settings")]
@@ -101,6 +102,11 @@ namespace StarterAssets
         {
 			OnReloadWeapon?.Invoke();
         }
+
+		public void OnTab(InputValue value)
+		{
+			TabInput(value.isPressed);
+		}
 #else
 	// old input sys if we do decide to have it (most likely wont)...
 #endif
@@ -145,6 +151,10 @@ namespace StarterAssets
 			shoot = newShootState;
 		}
 
+		public void TabInput(bool newShootState)
+		{
+			tab = newShootState;
+		}
 
 #if !UNITY_IOS || !UNITY_ANDROID
 

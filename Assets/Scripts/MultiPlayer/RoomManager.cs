@@ -50,14 +50,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         createdRoomName.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name;
         maxCountPlayersMod.text = "Max.Players: " + PhotonNetwork.CurrentRoom.MaxPlayers;
         var prop = PhotonNetwork.LocalPlayer.CustomProperties;
-        if (!prop.ContainsKey("IsReady"))
-            prop.Add("IsReady", false.ToString());
-        else
-            prop["IsReady"] = false.ToString();
-        if (!prop.ContainsKey("Character"))
-            prop.Add("Character", CharacterType.Soldier.ToString());
-        else
-            prop["Character"] = CharacterType.Soldier.ToString();
+        prop.ResetPropertyValue("IsReady", false);
+        prop.ResetPropertyValue("Character", CharacterType.Soldier);
         Team team;
         bool hasUnselectedTeams = HasUnselectedTeams(out IEnumerable<Team> selectedTeams, out IEnumerable<Team> unselectedTeams);
         if (hasUnselectedTeams)
@@ -72,12 +66,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 TeamCount = value.Count()
             }).Aggregate((a, b) => a.TeamCount < b.TeamCount ? a : b).team;
         }
-        if (!prop.ContainsKey("Team"))
-            prop.Add("Team", team.ToString());
-        else
-            prop["Team"] = team.ToString();
+        prop.ResetPropertyValue("Team", team);
         PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
         UpdatePlayersList();
+       
     }
     public void OnClickLeaveRoom()
     {
@@ -110,7 +102,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 continue;
             Team team = player.Value.CustomProperties.GetEnumInProperties<Team>("Team");
             PlayerItemRoom newPlayerItem = Instantiate(playerItemRoomPref, teamPanels.First(t => t.Team == team).transform);
-            newPlayerItem.IniPlayer(player.Value.NickName, player.Value);
+            newPlayerItem.IniPlayer(player.Value);
             playersItemsList.Add(newPlayerItem);
         }
         if (PhotonNetwork.IsMasterClient)
@@ -135,6 +127,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public void OnClickStartButton()
     {
+        PhotonNetwork.CurrentRoom.IsVisible = false;
         PhotonNetwork.LoadLevel("Map_1");
     }
 

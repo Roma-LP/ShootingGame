@@ -121,6 +121,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Tab",
+                    "type": "PassThrough",
+                    "id": "9fc8770e-e03d-4ccd-bbee-a60fd8339288",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -396,6 +405,17 @@
                     "processors": "",
                     "groups": "KeyboardMouse",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "de5d8589-6848-4c59-87a2-8068d911f1bb",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Tab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

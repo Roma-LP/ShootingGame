@@ -10,16 +10,13 @@ public class PlayerItemRoom : MonoBehaviour
     [SerializeField] private TMP_Text playerName;
     [SerializeField] private Image iconCharacter;
     [SerializeField] private TMP_Text typeOfCharacter;
-    [SerializeField] private Sprite selectedSprite;
-    [SerializeField] private Sprite normalSprite;
-    [SerializeField] private Image image;
     [SerializeField] private Toggle isReadyToggle;
     [SerializeField] private CharactersIconStore charactersIcon;
 
     private Player player;
 
     public Player Player { get => player; }
-    public Team Team => (Team)Enum.Parse(typeof(Team), (string)player.CustomProperties["Team"]);
+    public Team Team => player.CustomProperties.GetEnumInProperties<Team>("Team");
 
     private void Awake()
     {
@@ -36,14 +33,13 @@ public class PlayerItemRoom : MonoBehaviour
         }
     }
 
-    public void IniPlayer(string PlayerName, Player player)
+    public void IniPlayer(Player player)
     {
-        this.playerName.text = PlayerName;
-        //this.iconCharacter = ;
+        this.playerName.text = player.NickName;
         this.player = player;
         isReadyToggle.interactable = player == PhotonNetwork.LocalPlayer;
-        SetCharacter(player.CustomProperties.ContainsKey("Character") ? (CharacterType)Enum.Parse(typeof(CharacterType), (string)player.CustomProperties["Character"]) : CharacterType.Soldier);
-        isReadyToggle.isOn = player.CustomProperties.ContainsKey("IsReady") ? bool.Parse((string)player.CustomProperties["IsReady"]) : false;
+        SetCharacter(player.CustomProperties.ContainsKey("Character") ? player.CustomProperties.GetEnumInProperties<CharacterType>("Character") : CharacterType.Soldier);
+        isReadyToggle.isOn = player.CustomProperties.ContainsKey("IsReady") ? player.CustomProperties.GetBoolInProperties("IsReady") : false;
     }
 
     public void SetPlayerReady(bool isReady)
@@ -58,10 +54,6 @@ public class PlayerItemRoom : MonoBehaviour
         iconCharacter.sprite = charactersIcon[index].value;
     }
 
-    public void OnClickChooseCharacter()
-    {
-
-    }
 }
 
 public enum CharacterType
