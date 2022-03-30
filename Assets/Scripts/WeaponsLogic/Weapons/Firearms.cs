@@ -13,9 +13,11 @@ public abstract class Firearms : AmmoManager
     //        StartCoroutine(Shooting(raycastHit));
     //}
 
-    public override void UseWepon(Ray ray)
-    {
-        if(CheckCountAmmo())
-            base.UseWepon(ray);
-    }
+    //public override void UseWepon(Ray ray)
+    //{
+    //    if(CheckCountAmmo())
+    //    {
+    //        base.UseWepon(ray);
+    //    }
+    //}
 }

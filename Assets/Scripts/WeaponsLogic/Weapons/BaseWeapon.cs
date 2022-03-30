@@ -12,12 +12,13 @@ public abstract class BaseWeapon : MonoBehaviour
 
     private bool isUsingWeapon;
     private AudioSource audioSource;
+    
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
     }
-
+   
     public virtual void UseWepon(Ray raycast)
     {
         if (!isUsingWeapon)
@@ -26,6 +27,11 @@ public abstract class BaseWeapon : MonoBehaviour
             //audioSource.PlayOneShot(audioClipExplosion);  // пока нет звуков
         }
     } 
+
+    protected virtual void Shot()
+    {
+
+    }
 
     private IEnumerator UsingWeapon(Ray raycast)
     {
@@ -41,6 +47,7 @@ public abstract class BaseWeapon : MonoBehaviour
         hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
         hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
         hole.transform.Rotate(new Vector3(0, 0, 0));
+        Shot();
         yield return new WaitForSeconds(rateOfFire);
         isUsingWeapon = false;
     }
