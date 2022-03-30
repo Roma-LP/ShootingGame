@@ -1,23 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using ExitGames.Client.Photon;
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using System.Linq;
+using System;
+
+public enum Team { BlueTeam = 0, RedTeam = 1}
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     //Players Pref in Room
     [SerializeField] private PlayerItemRoom playerItemRoomPref;
-    [SerializeField] private Transform playerInBlueTeam;
-    [SerializeField] private Transform playerInRedTeam;
+    [SerializeField] private TeamPanel[] teamPanels;
     [SerializeField] private GameObject VC_LobbyCamera;
     [SerializeField] private GameObject VC_RoomCamera;
     [SerializeField] private TMP_Text createdRoomName;
     [SerializeField] private TMP_Text hostName;
     [SerializeField] private TMP_Text maxCountPlayersMod;
     [SerializeField] private GameObject playButton;
+    [SerializeField] private MapItemRoom mapItem;
 
     private List<PlayerItemRoom> playersItemsList = new List<PlayerItemRoom>();
     private System.Random random;
@@ -27,17 +30,46 @@ public class RoomManager : MonoBehaviourPunCallbacks
         random = new System.Random();
     }
 
+    private bool HasUnselectedTeams()
+    {
+        return HasUnselectedTeams(out IEnumerable<Team> selectedTeams, out IEnumerable<Team> unselectedTeams);
+    }
+
+    private bool HasUnselectedTeams(out IEnumerable<Team> selectedTeams, out IEnumerable<Team> unselectedTeams)
+    {
+        List<Team> teams = new List<Team>(Enum.GetNames(typeof(Team)).Select(t => new { team = (Team)Enum.Parse(typeof(Team), t) }).Select(t => t.team));
+        selectedTeams = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Select(t => t.CustomProperties.GetEnumInProperties<Team>("Team"));
+        unselectedTeams = teams.Except(selectedTeams);
+        return unselectedTeams.Count() != 0;
+    }
+
     public override void OnJoinedRoom()
     {
         VC_RoomCamera.SetActive(true);
         VC_LobbyCamera.SetActive(false);
         createdRoomName.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name;
         maxCountPlayersMod.text = "Max.Players: " + PhotonNetwork.CurrentRoom.MaxPlayers;
-        if (PhotonNetwork.IsMasterClient)
+        var prop = PhotonNetwork.LocalPlayer.CustomProperties;
+        prop.ResetPropertyValue("IsReady", false);
+        prop.ResetPropertyValue("Character", CharacterType.Soldier);
+        Team team;
+        bool hasUnselectedTeams = HasUnselectedTeams(out IEnumerable<Team> selectedTeams, out IEnumerable<Team> unselectedTeams);
+        if (hasUnselectedTeams)
         {
-            hostName.text = "Host: " + PhotonNetwork.NickName;
+            team = unselectedTeams.First();
         }
+        else
+        {
+            team = selectedTeams.GroupBy(t => t, (key, value) => new
+            {
+                team = key,
+                TeamCount = value.Count()
+            }).Aggregate((a, b) => a.TeamCount < b.TeamCount ? a : b).team;
+        }
+        prop.ResetPropertyValue("Team", team);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
         UpdatePlayersList();
+       
     }
     public void OnClickLeaveRoom()
     {
@@ -66,16 +98,22 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
         {
-            PlayerItemRoom newPlayerItem = Instantiate(playerItemRoomPref, random.Next(2) == 0 ? playerInBlueTeam : playerInRedTeam);
-            newPlayerItem.IniPlayer(player.Value.NickName);
+            if (!player.Value.CustomProperties.ContainsKey("Team"))
+                continue;
+            Team team = player.Value.CustomProperties.GetEnumInProperties<Team>("Team");
+            PlayerItemRoom newPlayerItem = Instantiate(playerItemRoomPref, teamPanels.First(t => t.Team == team).transform);
+            newPlayerItem.IniPlayer(player.Value);
             playersItemsList.Add(newPlayerItem);
-
-            if (PhotonNetwork.IsMasterClient)
-            {
-                hostName.text = "Host: " + PhotonNetwork.NickName;
-            }
-
         }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var prop = PhotonNetwork.CurrentRoom.CustomProperties;
+            prop["Creator"] = PhotonNetwork.NickName;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
+            mapItem.IsEnableToEdit = true;
+        }
+        else
+            mapItem.IsEnableToEdit = false;
     }
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
@@ -87,20 +125,72 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdatePlayersList();
     }
 
-    private void Update()
+    public void OnClickStartButton()
     {
-        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+        PhotonNetwork.LoadLevel("Map_1");
+    }
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        base.OnRoomPropertiesUpdate(propertiesThatChanged);
+        if (propertiesThatChanged.ContainsKey("MapName"))
         {
-            playButton.SetActive(true);
+            MapType map = propertiesThatChanged.GetEnumInProperties<MapType>("MapName");
+            mapItem.SetMap(map);
         }
-        else
+        if (propertiesThatChanged.ContainsKey("Creator"))
         {
-            playButton.SetActive(false);
+            hostName.text = "Host: " + (string)propertiesThatChanged["Creator"];
         }
     }
 
-    public void OnClickStartButton()
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        PhotonNetwork.LoadLevel("Map_1");
+        base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+        if (changedProps.ContainsKey("Team"))
+        {
+            UpdatePlayersList();
+        }
+        if (changedProps.ContainsKey("Character"))
+        {
+            var playerTab = playersItemsList.First(t => t.Player == targetPlayer);
+            playerTab.SetCharacter(changedProps.GetEnumInProperties<CharacterType>("Character"));
+        }
+        if (changedProps.ContainsKey("IsReady"))
+        {
+            var players = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value);
+            var playerTab = playersItemsList.First(t => t.Player == targetPlayer);
+            playerTab.SetPlayerReady(changedProps.GetBoolInProperties("IsReady"));
+            //playButton.SetActive(PhotonNetwork.IsMasterClient
+            //    && !HasUnselectedTeams()
+            //    && PhotonNetwork.CurrentRoom.Players.All(t => t.Value.CustomProperties.GetBoolInProperties("IsReady")));
+            playButton.SetActive(true);
+        }
+    }
+
+    public void ChangeTeam(int team)
+    {
+        Team selectedTeam = (Team)team;
+        int playersCount = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value).Where(t => t.CustomProperties.ContainsKey("Team")).Where(t => t.CustomProperties.GetEnumInProperties<Team>("Team") == selectedTeam).Count();
+        if (playersCount < PhotonNetwork.CurrentRoom.MaxPlayers / 2)
+        {
+            var prop = PhotonNetwork.LocalPlayer.CustomProperties;
+            prop["Team"] = ((Team)team).ToString();
+            prop["IsReady"] = false.ToString();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
+        }
+    }
+
+    public void ChangeCharacter(int character)
+    {
+        var prop = PhotonNetwork.LocalPlayer.CustomProperties;
+        prop["Character"] = ((CharacterType)character).ToString();
+        PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
+    }
+    public override void OnLeftRoom()
+    {
+        base.OnLeftRoom();
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable());
     }
 }

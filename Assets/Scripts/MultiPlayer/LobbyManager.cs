@@ -49,7 +49,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             Hashtable customProperties = new Hashtable();
             customProperties.Add("Creator", PhotonNetwork.NickName);
-            customProperties.Add("MapName", iconsStore.MapIcons[0].mapName);
+            customProperties.Add("MapName", iconsStore[0].enumValue.ToString());
 
             //set custom properties for display in room list.
             string[] customPropertiesForLobby = new string[2];
@@ -94,7 +94,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             {
 
                 RoomInfoTab newRoom = Instantiate(roomItemPrefab, roomItemsContent);
-                newRoom.Ini(this, room.Name, (string)room.CustomProperties["Creator"], (string)room.CustomProperties["MapName"], PhotonNetwork.CountOfPlayersInRooms, room.MaxPlayers);
+                newRoom.Ini(this, room.Name, (string)room.CustomProperties["Creator"], room.CustomProperties["MapName"].ToString(), PhotonNetwork.CountOfPlayersInRooms, room.MaxPlayers);
                 roomItemsList.Add(newRoom);
             }
             nextUpdateTime = Time.time + timeBetweenUpdates;

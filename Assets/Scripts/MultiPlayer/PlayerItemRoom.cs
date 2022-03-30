@@ -1,43 +1,64 @@
+using Photon.Pun;
+using Photon.Realtime;
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System;
 
 public class PlayerItemRoom : MonoBehaviour
 {
     [SerializeField] private TMP_Text playerName;
     [SerializeField] private Image iconCharacter;
     [SerializeField] private TMP_Text typeOfCharacter;
-    [SerializeField] Sprite selectedSprite;
-    [SerializeField] Sprite normalSprite;
-    [SerializeField] Image image;
+    [SerializeField] private Toggle isReadyToggle;
+    [SerializeField] private CharactersIconStore charactersIcon;
 
-    private CharacterType characterType;
+    private Player player;
+
+    public Player Player { get => player; }
+    public Team Team => player.CustomProperties.GetEnumInProperties<Team>("Team");
 
     private void Awake()
     {
         System.Random random = new System.Random();
-        characterType = (CharacterType)random.Next(Enum.GetNames(typeof(CharacterType)).Length);
     }
 
-    public void IniPlayer(string PlayerName)
+    public void OnTogglePressed(bool value)
     {
-        this.playerName.text = PlayerName;
-        //this.iconCharacter = ;
-        this.typeOfCharacter.text = characterType.ToString();
+        var prop = player.CustomProperties;
+        if (bool.Parse((string)prop["IsReady"]) != value)
+        {
+            prop["IsReady"] = value.ToString();
+            player.SetCustomProperties(prop);
+        }
     }
 
-    public void OnClickChooseCharacter()
+    public void IniPlayer(Player player)
     {
-
+        this.playerName.text = player.NickName;
+        this.player = player;
+        isReadyToggle.interactable = player == PhotonNetwork.LocalPlayer;
+        SetCharacter(player.CustomProperties.ContainsKey("Character") ? player.CustomProperties.GetEnumInProperties<CharacterType>("Character") : CharacterType.Soldier);
+        isReadyToggle.isOn = player.CustomProperties.ContainsKey("IsReady") ? player.CustomProperties.GetBoolInProperties("IsReady") : false;
     }
 
-   
+    public void SetPlayerReady(bool isReady)
+    {
+        isReadyToggle.isOn = isReady;
+    }
+
+    public void SetCharacter(CharacterType character)
+    {
+        int index = charactersIcon.GetIndexByEnum(character);
+        typeOfCharacter.text = character.ToString();
+        iconCharacter.sprite = charactersIcon[index].value;
+    }
+
 }
 
 public enum CharacterType
 {
-    Tank,
-    Solder,
-    Sniper
+    Sniper = 0,
+    Soldier = 1,
+    Tank = 2
 }

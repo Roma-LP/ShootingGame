@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8337a2d75e3342a4fa60f879d807a938, type: 3}
   m_Name: MapIconStore
   m_EditorClassIdentifier: 
-  mapIcons:
-  - mapName: Dust2
-    iconSprite: {fileID: 21300000, guid: 9c3d15adfbc21d64683a6553e1330d99, type: 3}
-  - mapName: Mirage
-    iconSprite: {fileID: 21300000, guid: d31115fa9cb67004b96bc76f48802b9f, type: 3}
-  - mapName: Inferno
-    iconSprite: {fileID: 21300000, guid: 8f85d8ce213015144a117d359c69fcbd, type: 3}
+  storeElements:
+  - enumValue: 0
+    value: {fileID: 21300000, guid: 9c3d15adfbc21d64683a6553e1330d99, type: 3}
+  - enumValue: 1
+    value: {fileID: 21300000, guid: 8b93523f32be16548bf56b5a6db4fefe, type: 3}
+  - enumValue: 2
+    value: {fileID: 21300000, guid: 841ae3188ba4d9746ba4f4ed86597a98, type: 3}

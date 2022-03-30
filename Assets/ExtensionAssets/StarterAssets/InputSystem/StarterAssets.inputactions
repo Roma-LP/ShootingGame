@@ -123,10 +123,10 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "TestButton",
-                    "type": "Button",
-                    "id": "4d6cafbc-cad5-4639-b268-3258fbbcce4f",
-                    "expectedControlType": "Button",
+                    "name": "Tab",
+                    "type": "PassThrough",
+                    "id": "9fc8770e-e03d-4ccd-bbee-a60fd8339288",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -410,12 +410,12 @@
                 },
                 {
                     "name": "",
-                    "id": "0f87e66a-f4e2-482a-8d91-899930ebc315",
-                    "path": "<Keyboard>/k",
+                    "id": "de5d8589-6848-4c59-87a2-8068d911f1bb",
+                    "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardMouse",
-                    "action": "TestButton",
+                    "action": "Tab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

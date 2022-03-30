@@ -13,35 +13,49 @@ public class MapItemRoom : MonoBehaviour
     [SerializeField] public TMP_Text mapName;
     [SerializeField] private Image mapIcon;
     [SerializeField] private MapIconsStore iconsStore;
+    [SerializeField] private GameObject[] arrows;
 
 
+    public bool IsEnableToEdit
+    {
+        set
+        {
+            foreach (var arrow in arrows)
+                arrow.SetActive(value);
+        }
+    }
     private void Awake()
     {
         SetCurrentMapByIndex();
     }
     public void OnClickLeftArrow()
     {
-        currentIndex = (int)Mathf.Repeat(--currentIndex, iconsStore.MapIcons.Length);
+        currentIndex = (int)Mathf.Repeat(--currentIndex, iconsStore.Length);
         SetCurrentMapByIndex();
 
     }
     public void OnClickRightArrow()
     {
-        currentIndex = (int)Mathf.Repeat(++currentIndex, iconsStore.MapIcons.Length);
+        currentIndex = (int)Mathf.Repeat(++currentIndex, iconsStore.Length);
         SetCurrentMapByIndex();
     }
 
     private void SetCurrentMapByIndex()
     {
-        mapIcon.sprite = iconsStore.MapIcons[currentIndex].iconSprite;
-        mapName.text = iconsStore.MapIcons[currentIndex].mapName;
+        mapIcon.sprite = iconsStore[currentIndex].value;
+        mapName.text = iconsStore[currentIndex].enumValue.ToString();
         if (PhotonNetwork.CurrentRoom != null)
         {
             var prop = PhotonNetwork.CurrentRoom.CustomProperties;
-            prop["MapName"] = iconsStore.MapIcons[currentIndex].mapName;
+            prop["MapName"] = iconsStore[currentIndex].enumValue.ToString();
             PhotonNetwork.CurrentRoom.SetCustomProperties(prop);
         }
     }
 
-    
+    public void SetMap(MapType map)
+    {
+        currentIndex = iconsStore.GetIndexByEnum(map);
+        mapName.text = map.ToString();
+        mapIcon.sprite = iconsStore[currentIndex].value;
+    }
 }

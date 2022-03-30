@@ -2,6 +2,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using Photon.Pun;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -9,11 +10,12 @@ using UnityEngine.InputSystem;
 
 namespace StarterAssets
 {
-    [RequireComponent(typeof(CharacterController))]
+
+    [RequireComponent(typeof(CharacterController), typeof(PhotonView))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : MonoBehaviour
+    public class ThirdPersonController : MonoBehaviourPunCallbacks
     {
         [Header("Player")]
         [Tooltip("Prone speed of the character in m/s")]
@@ -63,6 +65,10 @@ namespace StarterAssets
         public bool LockCameraPosition = false;
 
         public Weapons CurrentWeapon { get { return currentWeapon; } }
+
+        [SerializeField] private GameObject playerCamera;
+        [SerializeField] private GameObject crosshair;
+        private PhotonView PV;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -122,12 +128,33 @@ namespace StarterAssets
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
             _input = GetComponent<StarterAssetsInputs>();
+           // PV = GetComponent<PhotonView>();
             _input.OnProneCustom += Prone;
             _input.OnPickWeaponCustom += SetWeapon;
+
+           
+
         }
 
         private void Start()
         {
+            if (GetComponent<PhotonView>().IsMine)
+            {
+
+                playerCamera.SetActive(true);
+                crosshair.SetActive(true);
+            }
+            else
+            {
+                playerCamera.SetActive(false);
+                crosshair.SetActive(false);
+                Destroy(this);
+                Destroy(GetComponent<ThirdPersonShooterController>());
+                Destroy(GetComponent<CharacterController>());
+                Destroy(GetComponent<PlayerInput>());
+                return;
+            }
+
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             AssignAnimationIDs();

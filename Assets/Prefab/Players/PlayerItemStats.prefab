@@ -223,8 +223,9 @@ GameObject:
   - component: {fileID: 3425258725050604553}
   - component: {fileID: 3425258725050604558}
   - component: {fileID: 3425258725050604559}
+  - component: {fileID: 1153885911261900814}
   m_Layer: 5
-  m_Name: PlayerInStats
+  m_Name: PlayerItemStats
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,6 +322,24 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
+--- !u!114 &1153885911261900814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425258725050604557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02efe30380f5bca4784e85991393f9be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerName: {fileID: 3425258726523202044}
+  iconCharacter: {fileID: 2632363987409242935}
+  typeOfCharacter: {fileID: 3425258726505520764}
+  charactersIcon: {fileID: 11400000, guid: cde6b5db35ae7544b8a1c200a279e024, type: 2}
+  countKills: {fileID: 8498323402616090949}
+  countDeaths: {fileID: 7578474783009275225}
 --- !u!1 &3425258726505520738
 GameObject:
   m_ObjectHideFlags: 0
