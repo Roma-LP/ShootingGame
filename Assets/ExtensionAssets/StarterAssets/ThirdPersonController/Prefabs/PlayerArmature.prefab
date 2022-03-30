@@ -674,7 +674,7 @@ GameObject:
   m_Component:
   - component: {fileID: 669041985738091607}
   m_Layer: 0
-  m_Name: Right_UpperArm__HitBox
+  m_Name: Right_UpperArm
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -769,7 +769,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6044159111065775861}
   m_Layer: 0
-  m_Name: Head_HitBox
+  m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1057,7 +1057,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2719569588957798408}
   m_Layer: 0
-  m_Name: Chest_HitBox
+  m_Name: Chest
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1184,7 +1184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8519642851085155206}
   m_Layer: 0
-  m_Name: Left_UpperArm_HitBox
+  m_Name: Left_UpperArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1376,7 +1376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2105937543855322119}
   m_Layer: 0
-  m_Name: Right_UpperLeg_HitBox
+  m_Name: Right_UpperLeg
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1512,6 +1512,7 @@ GameObject:
   - component: {fileID: 135756642000475821}
   - component: {fileID: 4416926081852918493}
   - component: {fileID: 2056227739}
+  - component: {fileID: 5445923459037043494}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -1610,6 +1611,8 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  playerCamera: {fileID: 0}
+  crosshair: {fileID: 0}
   newBehaviourScript: {fileID: 0}
   corotin: {fileID: 0}
 --- !u!114 &5885216827943657505
@@ -1649,6 +1652,7 @@ MonoBehaviour:
   prone: 0
   aim: 0
   shoot: 0
+  tab: 0
   analogMovement: 0
   cursorLocked: 1
   cursorInputForLook: 1
@@ -1777,6 +1781,28 @@ MonoBehaviour:
   prefabGrenade: {fileID: 6725229744557494813}
   starterAssetsInputs: {fileID: 135756642000475821}
   magazineAmmos: {fileID: 7511426702044680601}
+--- !u!114 &5445923459037043494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0
@@ -2244,7 +2270,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6983258932120580808}
   m_Layer: 0
-  m_Name: Left_UpperLeg_HitBox
+  m_Name: Left_UpperLeg
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2530,7 +2556,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8322255484584408707}
   m_Layer: 0
-  m_Name: Right_LowerArm_HitBox
+  m_Name: Right_LowerArm
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2594,7 +2620,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2857373400946456485}
   m_Layer: 0
-  m_Name: Left_LowerArm_HitBox
+  m_Name: Left_LowerArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2658,7 +2684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4329760479032487968}
   m_Layer: 0
-  m_Name: Left_LowerLeg_HitBox
+  m_Name: Left_LowerLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3133,7 +3159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 557817384646886437}
   m_Layer: 0
-  m_Name: Right_LowerLeg_HitBox
+  m_Name: Right_LowerLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
