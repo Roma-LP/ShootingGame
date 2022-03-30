@@ -1,20 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
 public abstract class ThrowingGrenade : MonoBehaviour
 {
     [SerializeField, Range(1f, 10f)] protected float timeToExplosion;
 
     protected Rigidbody body;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         body = GetComponent<Rigidbody>();
     }
 
-    public void Throw(Vector3 direction)  // будет private
+    public void Throw(Vector3 direction) 
     {
         //body.isKinematic = false;
        // body.useGravity = true;

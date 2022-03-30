@@ -50,6 +50,6 @@ public abstract class AmmoManager : BaseWeapon
     //    }
     //}
 
-    //public int GetAmmoTotal() => ammoTotal;
-    public int GetCurrentAmmo() => currentAmmo;
+    //public int GetAmmoTotal => ammoTotal;
+    public int CurrentAmmo => currentAmmo;
 }

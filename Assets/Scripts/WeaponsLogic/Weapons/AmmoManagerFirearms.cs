@@ -32,5 +32,5 @@ public abstract class AmmoManagerFirearms : AmmoManager
         }
     }
 
-    public int GetAmmoTotal() => ammoTotal;
+    public int AmmoTotal => ammoTotal;
 }

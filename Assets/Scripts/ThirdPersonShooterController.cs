@@ -1,6 +1,5 @@
 using Cinemachine;
 using StarterAssets;
-using System.Collections;
 using UnityEngine;
 
 public class ThirdPersonShooterController : MonoBehaviour
@@ -122,7 +121,7 @@ public class ThirdPersonShooterController : MonoBehaviour
         firstWeapon.gameObject.SetActive(false);
         secondWeapon.gameObject.SetActive(false);
         thirdWeapon.gameObject.SetActive(false);
-        //prefabGrenade.gameObject.SetActive(false);
+        prefabGrenade.gameObject.SetActive(false);
         switch (weapons)
         {
             case Weapons.FirstWeapon:
@@ -138,7 +137,7 @@ public class ThirdPersonShooterController : MonoBehaviour
                 currentWeapon_v2 = thirdWeapon;
                 break;
             case Weapons.FourthWeapon:
-               // prefabGrenade.gameObject.SetActive(true);
+                prefabGrenade.gameObject.SetActive(true);
                 currentWeapon_v2 = prefabGrenade;
                 break;
         }
@@ -152,34 +151,23 @@ public class ThirdPersonShooterController : MonoBehaviour
             case AmmoManagerFirearms:
                 {
                     var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
-                    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
-                    magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
+                    magazineAmmos.SetFirearms(ammoManagerWeapon.CurrentAmmo, ammoManagerWeapon.AmmoTotal);
                     break;
                 }
             case AmmoManagerGrenade:
                 {
                     var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerGrenade;
-                    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
+                    magazineAmmos.SetGrenade(ammoManagerWeapon.CurrentAmmo);
+                    if (ammoManagerWeapon.CurrentAmmo == 0)
+                        prefabGrenade.gameObject.SetActive(false);
                     break;
                 }
-            default:
+            case ColdWeapon:
                 {
-                    magazineAmmos.SetEmptyFields();
+                    magazineAmmos.SetColdWeapon();
                     break;
                 }
         }
-
-
-        //if (currentWeapon_v2 is AmmoManagerFirearms)
-        //{
-        //    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
-        //    magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
-        //    magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
-        //}
-        //else
-        //{
-        //    magazineAmmos.SetEmptyFields();
-        //}
     }
 
     private void ReloadWeapon()

@@ -51,4 +51,9 @@ public abstract class BaseWeapon : MonoBehaviour
         yield return new WaitForSeconds(rateOfFire);
         isUsingWeapon = false;
     }
+
+    private void OnEnable()
+    {
+        isUsingWeapon = false;
+    }
 }

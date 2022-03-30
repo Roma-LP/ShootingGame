@@ -25,7 +25,7 @@ public class Smoke : ThrowingGrenade
         smokePartickeSystem.duration = lifeSmoke * smokePartickeSystem.simulationSpeed - smokePartickeSystem.startLifetimeMultiplier;
         smoke.Play();
         yield return new WaitForSeconds(lifeSmoke);
-        //Destroy(smoke);
+        Destroy(smoke);
         Destroy(gameObject);
     }
 }

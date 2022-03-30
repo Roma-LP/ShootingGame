@@ -10,7 +10,8 @@ public class GrenadeManager : AmmoManagerGrenade
     private bool isPlaying;
     public override void UseWepon(Ray ray)
     {
-        if (isPlaying == false) StartCoroutine(Grenade(ray));
+        if (isPlaying == false && CheckCountAmmo())
+            StartCoroutine(Grenade(ray));
     }
 
     IEnumerator Grenade(Ray ray)
@@ -25,6 +26,11 @@ public class GrenadeManager : AmmoManagerGrenade
         //{
         //    prefabGrenade.gameObject.SetActive(true);
         //}
+        isPlaying = false;
+    }
+
+    private void OnEnable()
+    {
         isPlaying = false;
     }
 }
