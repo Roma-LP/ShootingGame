@@ -20,12 +20,7 @@ public class GrenadeManager : AmmoManagerGrenade
         Shot();
         ThrowingGrenade grenade = Instantiate(throwingGrenade, spawnPointer.position, Quaternion.identity);
         grenade.Throw(ray.direction * forceThrow);
-        //prefabGrenade.gameObject.SetActive(false);
         yield return new WaitForSeconds(1.3f);
-        //if (x.GetCurrentAmmo() != 0)
-        //{
-        //    prefabGrenade.gameObject.SetActive(true);
-        //}
         isPlaying = false;
     }
 

@@ -8,7 +8,6 @@ public class FlashLight : ThrowingGrenade
     [SerializeField] private Animator anim;
 
     private CapsuleCollider capsuleCollider;
-    private FlashCanvasManager playerFlash;
 
     protected override void Awake()
     {
@@ -16,7 +15,6 @@ public class FlashLight : ThrowingGrenade
         capsuleCollider = GetComponent<CapsuleCollider>();
         //var x = Camera.main.GetComponentInChildren<FlashCanvasManager>();
         //var y = Camera.main.GetComponentInParent<FlashCanvasManager>();
-        playerFlash = GameObject.FindWithTag("Player").GetComponentInChildren<FlashCanvasManager>();
     }
 
     private bool CalculateExplosure()
@@ -55,7 +53,7 @@ public class FlashLight : ThrowingGrenade
     {
         if(CalculateExplosure())
         {
-            playerFlash.TriggerFlash(flashTime);
+            GameManager.Instance.ShowFlashBagEffect(flashTime);
         }
         Destroy(gameObject);    
         yield break;

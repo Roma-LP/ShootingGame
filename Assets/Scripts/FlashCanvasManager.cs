@@ -5,10 +5,16 @@ public class FlashCanvasManager : MonoBehaviour
 {
     [SerializeField] private Animator animator;
 
-    private void Awake()
+    private void Start()
     {
-        animator = GetComponent<Animator>();
+        GameManager.Instance.OnFlashbagEffect += TriggerFlash;
     }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnFlashbagEffect -= TriggerFlash;
+    }
+
     private IEnumerator Flashing(float flashTime)
     {
         animator.SetTrigger("FlashOn");

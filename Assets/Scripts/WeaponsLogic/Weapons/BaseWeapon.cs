@@ -39,7 +39,7 @@ public abstract class BaseWeapon : MonoBehaviour
         if (Physics.Raycast(raycast, out RaycastHit raycastHit))
         {
             Debug.DrawRay(raycast.origin, raycast.direction, Color.blue);
-            print("UsingWeapon");
+            raycastHit.collider.gameObject.GetComponent<Multiplier>()?.DetectedDamage(ammoDamage);
         }
         Instantiate(prefabHitPartical, raycastHit.point, Quaternion.identity);
 

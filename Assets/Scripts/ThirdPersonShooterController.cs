@@ -1,8 +1,11 @@
 using Cinemachine;
+using Photon.Pun;
+using Photon.Realtime;
 using StarterAssets;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class ThirdPersonShooterController : MonoBehaviour
+public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 {
     //[SerializeField] private CinemachineFramingTransposer VirtualCamera;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
@@ -21,6 +24,8 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private GrenadeManager prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
+    [SerializeField] private PhotonView PV;
+    [SerializeField, Min(1f)] private float HP;
 
 
     private ThirdPersonController thirdPersonController;
@@ -35,11 +40,12 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+        //PV = GetComponent<PhotonView>();
         currentWeapon_v2 = firstWeapon;
         SetAmmoWeapon();
 
         starterAssetsInputs.OnReloadWeapon += ReloadWeapon;
-        starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
+        //starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
 
     private void Update()
@@ -115,8 +121,31 @@ public class ThirdPersonShooterController : MonoBehaviour
         }
     }
 
-    private void SetWeapon(Weapons weapons)
+    //public void SetWeapon(Weapons weapons)
+    //{
+    //    print("do RPC");
+    //    photonView.RPC("SetingWeapon", RpcTarget.All, weapons);
+    //    print("posle RPC");
+    //}
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
+        if (!PV.IsMine && targetPlayer == PV.Owner)
+        {
+            SetWeapon((Weapons)changedProps["weapon"]);
+        }
+    }
+
+    public void SetWeapon(Weapons weapons)
+    {
+        if (PV.IsMine)
+        {
+            var prop = PhotonNetwork.LocalPlayer.CustomProperties;
+            prop.ResetPropertyValue("weapon", weapons);
+            //prop.Add("weapon", weapons);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
+        }
+        //if (!photonView.IsMine)  return;
         //currentWeapon = weapons;
         firstWeapon.gameObject.SetActive(false);
         secondWeapon.gameObject.SetActive(false);
@@ -197,9 +226,34 @@ public class ThirdPersonShooterController : MonoBehaviour
     //    isPlaying = false;
     //}
 
+
+    public void ReducingLife(float damage)
+    {
+        PV.RPC("TakeDamage", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    private void TakeDamage(float damage)
+    {
+        if (!PV.IsMine) return;
+
+        HP -= damage;
+
+        if (HP <= 0f)
+        {
+            Dead();
+        }
+    }
+
+    public void Dead()
+    {
+        PhotonNetwork.Destroy(gameObject);
+        GameManager.Instance.Spawn();
+    }
+
     private void OnDestroy()
     {
-        starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
+        // starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
         starterAssetsInputs.OnReloadWeapon -= ReloadWeapon;
     }
 }
