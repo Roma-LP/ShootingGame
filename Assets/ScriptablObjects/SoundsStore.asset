@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a331fec4004c135438324eba582cef58, type: 3}
+  m_Name: SoundsStore
+  m_EditorClassIdentifier: 
+  storeElements:
+  - enumValue: 0
+    value: {fileID: 8300000, guid: acb24f8dd9186ab4db109dda07553fd1, type: 3}
+  - enumValue: 1
+    value: {fileID: 8300000, guid: f64dd61f4a7c08f409b7f083baf8acea, type: 3}
+  - enumValue: 2
+    value: {fileID: 8300000, guid: 40c6539c57cca434faf103c816ab6828, type: 3}
+  - enumValue: 3
+    value: {fileID: 8300000, guid: 7aa5cebd8f35013439a97584e261ca42, type: 3}
+  - enumValue: 4
+    value: {fileID: 8300000, guid: f64dd61f4a7c08f409b7f083baf8acea, type: 3}
+  - enumValue: 5
+    value: {fileID: 8300000, guid: e444fb11ebd11ce4f99376aa9118d038, type: 3}
+  - enumValue: 6
+    value: {fileID: 8300000, guid: be516adbcdca0f94aa2d0121f82dd6b3, type: 3}
+  - enumValue: 7
+    value: {fileID: 8300000, guid: 6b4ed7794d52fef49b4f0f54fa76bfb5, type: 3}
+  - enumValue: 8
+    value: {fileID: 8300000, guid: e444fb11ebd11ce4f99376aa9118d038, type: 3}
+  - enumValue: 9
+    value: {fileID: 8300000, guid: 5bea4f15d7e5c284c90b43509096dc0b, type: 3}
+  - enumValue: 10
+    value: {fileID: 8300000, guid: f64dd61f4a7c08f409b7f083baf8acea, type: 3}
+  - enumValue: 11
+    value: {fileID: 8300000, guid: 68faac008c55a254a840338d7b37be6c, type: 3}
+  - enumValue: 12
+    value: {fileID: 8300000, guid: 4e4a87c1df7d8fe4591f20607e82bdc2, type: 3}
+  - enumValue: 13
+    value: {fileID: 8300000, guid: 7659a5553c536bc489e2951dc642f0c7, type: 3}
+  - enumValue: 14
+    value: {fileID: 8300000, guid: fa71f57b90241cc43b01cc4c77488378, type: 3}
+  - enumValue: 15
+    value: {fileID: 8300000, guid: 3e4df96b02f47eb4888edfb5a652c103, type: 3}
+  - enumValue: 16
+    value: {fileID: 8300000, guid: 28d73d9766551bc42b550aadf8e61f52, type: 3}

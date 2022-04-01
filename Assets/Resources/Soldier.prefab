@@ -3487,6 +3487,7 @@ MonoBehaviour:
   audioClipExplosion: {fileID: 0}
   prefabHitPartical: {fileID: 1911283446444741033, guid: ab634fb15d053d44094e8b876d44249f, type: 3}
   prefabBulletHole: {fileID: 4554194966925452021, guid: 6a03fc48f38313941b4491aacfee4fca, type: 3}
+  currentAmmo: 30
   ammoMagazine: 30
   ammoTotal: 90
 --- !u!1001 &4623289418417426579
@@ -3669,6 +3670,7 @@ MonoBehaviour:
   audioClipExplosion: {fileID: 0}
   prefabHitPartical: {fileID: 1911283446444741033, guid: ab634fb15d053d44094e8b876d44249f, type: 3}
   prefabBulletHole: {fileID: 4554194966925452021, guid: 6a03fc48f38313941b4491aacfee4fca, type: 3}
+  currentAmmo: 30
   ammoMagazine: 5
   ammoTotal: 90
 --- !u!1001 &4623289418433316993
