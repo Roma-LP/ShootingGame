@@ -26,14 +26,13 @@ public class ScorePanel : MonoBehaviourPunCallbacks
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+        var playerTab = playersItemsStatsList.First(t => t.Player == targetPlayer);
         if (changedProps.ContainsKey("Kills"))
         {
-            var playerTab = playersItemsStatsList.First(t => t.Player == targetPlayer);
             playerTab.UpdateKills(changedProps.GetIntInProperties("Kills"));
         }
         if (changedProps.ContainsKey("Deaths"))
         {
-            var playerTab = playersItemsStatsList.First(t => t.Player == targetPlayer);
             playerTab.UpdateDeaths(changedProps.GetIntInProperties("Deaths"));
         }
     }

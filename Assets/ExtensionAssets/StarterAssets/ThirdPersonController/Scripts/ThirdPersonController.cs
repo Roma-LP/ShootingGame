@@ -118,7 +118,9 @@ namespace StarterAssets
         private float sensitivityCamera;
 
 
-
+        /// <summary>
+        [SerializeField] private ThirdPersonShooterController x;
+        /// </summary>
         private void Awake()
         {
             currentWeapon = Weapons.FirstWeapon;
@@ -460,6 +462,7 @@ namespace StarterAssets
         }
         private void SetWeapon(Weapons weapons)
         {
+            x.SetWeapon(weapons);
             currentWeapon = weapons; // для работы ножа IEnumerator WaitAnimationKnife(), переписать в скрипт ножа!
             _animator.SetBool(_animIDFirstWeapon, false);
             _animator.SetBool(_animIDSecondWeapon, false);
@@ -492,7 +495,22 @@ namespace StarterAssets
             _input.OnProneCustom -= Prone;
             _input.OnPickWeaponCustom -= SetWeapon;
         }
+        //////////////////////////////////////////////   TESTS    ///////////////////////////////////////////////////////////////
+        public NewBehaviourScript newBehaviourScript;
+        private void OnTestButton()
+        {
+            if (newBehaviourScript.CalculateExplosure())
+                print("flashed");
+            else
+                print("unflashed");
+
+            corotin.UseWepon();
+        }
+
+        public corotin corotin;
+        //////////////////////////////////////////////   TESTS    ///////////////////////////////////////////////////////////////
     }
+
 }
 
 public enum Weapons

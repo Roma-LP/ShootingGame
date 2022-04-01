@@ -2,7 +2,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using StarterAssets;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,19 +13,26 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private ScorePanel scorePanel;
     private StarterAssetsInputs starterAssetsInputs;
+    private static GameManager instance;
+    string characterPrefabName;
+    Vector3 spawnPosition;
+
+    public event Action<float> OnFlashbagEffect;
 
     private void Awake()
     {
+        instance = this;
         // не забыть сделать синхронизацию спавна
         var props = PhotonNetwork.LocalPlayer.CustomProperties;
         props.ResetPropertyValue("Kills", 0);
         props.ResetPropertyValue("Deaths", 0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-        Vector3 spawnPosition = teamPoints.First(t => t.team == PhotonNetwork.LocalPlayer.CustomProperties.GetEnumInProperties<Team>("Team")).GetPoint();
-        string characterPrefabName = characterPathStore[characterPathStore.GetIndexByEnum(PhotonNetwork.LocalPlayer.CustomProperties.GetEnumInProperties<CharacterType>("Character"))].value;
-        GameObject player = PhotonNetwork.Instantiate(characterPrefabName, spawnPosition, Quaternion.identity);
-        starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
+        spawnPosition = teamPoints.First(t => t.team == PhotonNetwork.LocalPlayer.CustomProperties.GetEnumInProperties<Team>("Team")).GetPoint();
+        characterPrefabName = characterPathStore[characterPathStore.GetIndexByEnum(PhotonNetwork.LocalPlayer.CustomProperties.GetEnumInProperties<CharacterType>("Character"))].value;
+        Spawn();
     }
+
+    public static GameManager Instance => instance;
 
     private void Update()
     {
@@ -42,6 +48,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void ShowFlashBagEffect(float flashTime)
+    {
+        OnFlashbagEffect?.Invoke(flashTime);
+    }
+
     [Serializable]
     public class TeamPoint
     {
@@ -55,7 +66,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    
+    public void Spawn()
+    {
+        GameObject player = PhotonNetwork.Instantiate(characterPrefabName, spawnPosition, Quaternion.identity);
+        starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
+    }
 }
 
 

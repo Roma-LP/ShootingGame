@@ -1,26 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class MagazineAmmos : MonoBehaviour
 {
     [SerializeField] private TMP_Text currentAmmo;
+    [SerializeField] private TMP_Text slash;
     [SerializeField] private TMP_Text countAmmoTotal;
 
-    public void SetCurrentAmmo(int currentAmmo)
+    private void SetActiveUIAmmos(bool mod)
     {
-        this.currentAmmo.text = currentAmmo.ToString();
+        this.currentAmmo.gameObject.SetActive(mod);
+        this.slash.gameObject.SetActive(mod);
+        this.countAmmoTotal.gameObject.SetActive(mod);
     }
 
-    public void SetCountAmmoTotal(int countAmmoTotal)
+    public void SetFirearms(int currentAmmo, int countAmmoTotal)
     {
+        SetActiveUIAmmos(true);
+        this.currentAmmo.text = currentAmmo.ToString();
         this.countAmmoTotal.text = countAmmoTotal.ToString();
     }
 
-    public void SetEmptyFields()
+    public void SetGrenade(int currentAmmo)
     {
-        this.currentAmmo.text = "-";
-        this.countAmmoTotal.text = "-";
+        SetActiveUIAmmos(false);
+        this.currentAmmo.text = currentAmmo.ToString();
+        this.currentAmmo.gameObject.SetActive(true);
+    }
+
+    public void SetColdWeapon()
+    {
+        SetActiveUIAmmos(false);
     }
 }

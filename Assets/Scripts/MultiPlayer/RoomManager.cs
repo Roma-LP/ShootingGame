@@ -162,10 +162,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
             var players = PhotonNetwork.CurrentRoom.Players.Select(t => t.Value);
             var playerTab = playersItemsList.First(t => t.Player == targetPlayer);
             playerTab.SetPlayerReady(changedProps.GetBoolInProperties("IsReady"));
-            //playButton.SetActive(PhotonNetwork.IsMasterClient
-            //    && !HasUnselectedTeams()
-            //    && PhotonNetwork.CurrentRoom.Players.All(t => t.Value.CustomProperties.GetBoolInProperties("IsReady")));
-            playButton.SetActive(true);
+            playButton.SetActive(PhotonNetwork.IsMasterClient
+                && !HasUnselectedTeams()
+                && PhotonNetwork.CurrentRoom.Players.All(t => t.Value.CustomProperties.GetBoolInProperties("IsReady")));
         }
     }
 

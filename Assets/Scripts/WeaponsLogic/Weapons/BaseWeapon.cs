@@ -39,7 +39,7 @@ public abstract class BaseWeapon : MonoBehaviour
         if (Physics.Raycast(raycast, out RaycastHit raycastHit))
         {
             Debug.DrawRay(raycast.origin, raycast.direction, Color.blue);
-            print("UsingWeapon");
+            raycastHit.collider.gameObject.GetComponent<Multiplier>()?.DetectedDamage(ammoDamage);
         }
         Instantiate(prefabHitPartical, raycastHit.point, Quaternion.identity);
 
@@ -49,6 +49,11 @@ public abstract class BaseWeapon : MonoBehaviour
         hole.transform.Rotate(new Vector3(0, 0, 0));
         Shot();
         yield return new WaitForSeconds(rateOfFire);
+        isUsingWeapon = false;
+    }
+
+    private void OnEnable()
+    {
         isUsingWeapon = false;
     }
 }

@@ -1,9 +1,11 @@
 using Cinemachine;
+using Photon.Pun;
+using Photon.Realtime;
 using StarterAssets;
-using System.Collections;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class ThirdPersonShooterController : MonoBehaviour
+public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 {
     //[SerializeField] private CinemachineFramingTransposer VirtualCamera;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
@@ -19,9 +21,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private Firearms firstWeapon;
     [SerializeField] private Firearms secondWeapon;
     [SerializeField] private ColdWeapon thirdWeapon;
-    [SerializeField] private Grenade prefabGrenade;
+    [SerializeField] private GrenadeManager prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
+    [SerializeField] private PhotonView PV;
+    [SerializeField, Min(1f)] private float HP;
 
 
     private ThirdPersonController thirdPersonController;
@@ -36,13 +40,13 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+        //PV = GetComponent<PhotonView>();
         currentWeapon_v2 = firstWeapon;
         SetAmmoWeapon();
 
         starterAssetsInputs.OnReloadWeapon += ReloadWeapon;
-        starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
+        //starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
-    
 
     private void Update()
     {
@@ -64,16 +68,21 @@ public class ThirdPersonShooterController : MonoBehaviour
 
         if (starterAssetsInputs.shoot)
         {
-            if (currentWeapon_v2 is Grenade)
-            {
-                if (isPlaying == false) StartCoroutine(Grenade());
-            }
-            else
-            {
-                currentWeapon_v2.UseWepon(ray);
-                crosshair.ChangeSizeCrosshairOnShoot();
-            }
+            currentWeapon_v2.UseWepon(ray);
+            crosshair.ChangeSizeCrosshairOnShoot();
             SetAmmoWeapon();
+
+
+            //if (currentWeapon_v2 is Grenade)
+            //{
+            //    if (isPlaying == false) StartCoroutine(Grenade());
+            //}
+            //else
+            //{
+            //    currentWeapon_v2.UseWepon(ray);
+            //    crosshair.ChangeSizeCrosshairOnShoot();
+            //}
+            //SetAmmoWeapon();
 
 
             //if (thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
@@ -112,8 +121,31 @@ public class ThirdPersonShooterController : MonoBehaviour
         }
     }
 
-    private void SetWeapon(Weapons weapons)
+    //public void SetWeapon(Weapons weapons)
+    //{
+    //    print("do RPC");
+    //    photonView.RPC("SetingWeapon", RpcTarget.All, weapons);
+    //    print("posle RPC");
+    //}
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
+        if (!PV.IsMine && targetPlayer == PV.Owner)
+        {
+            SetWeapon((Weapons)changedProps["weapon"]);
+        }
+    }
+
+    public void SetWeapon(Weapons weapons)
+    {
+        if (PV.IsMine)
+        {
+            var prop = PhotonNetwork.LocalPlayer.CustomProperties;
+            prop.ResetPropertyValue("weapon", weapons);
+            //prop.Add("weapon", weapons);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
+        }
+        //if (!photonView.IsMine)  return;
         //currentWeapon = weapons;
         firstWeapon.gameObject.SetActive(false);
         secondWeapon.gameObject.SetActive(false);
@@ -143,48 +175,88 @@ public class ThirdPersonShooterController : MonoBehaviour
 
     private void SetAmmoWeapon()
     {
-        if (currentWeapon_v2 is AmmoManager)
+        switch (currentWeapon_v2)
         {
-            var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
-            magazineAmmos.SetCurrentAmmo(ammoManagerWeapon.GetCurrentAmmo());
-            magazineAmmos.SetCountAmmoTotal(ammoManagerWeapon.GetAmmoTotal());
-        }
-        else
-        {
-            magazineAmmos.SetEmptyFields();
+            case AmmoManagerFirearms:
+                {
+                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
+                    magazineAmmos.SetFirearms(ammoManagerWeapon.CurrentAmmo, ammoManagerWeapon.AmmoTotal);
+                    break;
+                }
+            case AmmoManagerGrenade:
+                {
+                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerGrenade;
+                    magazineAmmos.SetGrenade(ammoManagerWeapon.CurrentAmmo);
+                    if (ammoManagerWeapon.CurrentAmmo == 0)
+                        prefabGrenade.gameObject.SetActive(false);
+                    break;
+                }
+            case ColdWeapon:
+                {
+                    magazineAmmos.SetColdWeapon();
+                    break;
+                }
         }
     }
 
     private void ReloadWeapon()
     {
-        if (currentWeapon_v2 is AmmoManager)
+        if (currentWeapon_v2 is AmmoManagerFirearms)
         {
-            var ammoManagerWeapon = currentWeapon_v2 as AmmoManager;
+            var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
             ammoManagerWeapon.ReloadCurrentWeapon();
             SetAmmoWeapon();
         }
     }
 
-    IEnumerator Grenade()
+    //IEnumerator Grenade()
+    //{
+    //    isPlaying = true;
+    //    var x = currentWeapon_v2 as Grenade;
+    //    if (!x.CheckCountAmmo()) yield break;
+    //    x.kek();
+    //    Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
+    //    grenade.Throw(ray.direction * forceThrow);
+    //    prefabGrenade.gameObject.SetActive(false);
+    //    yield return new WaitForSeconds(1.3f);
+    //    if (x.GetCurrentAmmo() != 0)
+    //    {
+    //        prefabGrenade.gameObject.SetActive(true);
+    //    }
+    //    isPlaying = false;
+    //}
+
+
+    public void ReducingLife(float damage)
     {
-        isPlaying = true;
-        var x = currentWeapon_v2 as Grenade;
-        if (!x.CanShoot) yield break;
-        x.kek();
-        Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
-        grenade.Throw(ray.direction * forceThrow);
-        prefabGrenade.gameObject.SetActive(false);
-        yield return new WaitForSeconds(1.3f);
-        if (x.GetCurrentAmmo() != 0)
+        PV.RPC("TakeDamage", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    private void TakeDamage(float damage)
+    {
+        if (!PV.IsMine) return;
+
+        HP -= damage;
+
+        if (HP <= 0f)
         {
-            prefabGrenade.gameObject.SetActive(true);
+            Dead();
         }
-        isPlaying = false;
+    }
+
+    public void Dead()
+    {
+        var props = PhotonNetwork.LocalPlayer.CustomProperties;
+        var countDeaths = props.GetIntInProperties("Deaths");
+        props.ResetPropertyValue("Deaths", ++countDeaths);
+        PhotonNetwork.Destroy(gameObject);
+        GameManager.Instance.Spawn();
     }
 
     private void OnDestroy()
     {
-        starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
+        // starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
         starterAssetsInputs.OnReloadWeapon -= ReloadWeapon;
     }
 }

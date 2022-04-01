@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public abstract class Grenade : AmmoManager
+public abstract class Grenade : AmmoManagerGrenade
 {
     [SerializeField, Range(1f, 10f)] protected float timeToExplosion;
     //[SerializeField, Min(1f)] protected float forceThrow;
@@ -38,10 +38,5 @@ public abstract class Grenade : AmmoManager
     {
         //Throw(ray.direction * forceThrow);
         Throw(ray.direction);
-    }
-
-    public override void ReloadCurrentWeapon()
-    {
-        return;
     }
 }

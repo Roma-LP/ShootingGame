@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Firearms : AmmoManager
+public abstract class Firearms : AmmoManagerFirearms
 {
     //protected abstract IEnumerator Explosion();
 
