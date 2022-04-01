@@ -247,6 +247,9 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
+        var props = PhotonNetwork.LocalPlayer.CustomProperties;
+        var countDeaths = props.GetIntInProperties("Deaths");
+        props.ResetPropertyValue("Deaths", ++countDeaths);
         PhotonNetwork.Destroy(gameObject);
         GameManager.Instance.Spawn();
     }
