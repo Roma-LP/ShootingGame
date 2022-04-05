@@ -11,7 +11,7 @@ using Photon.Pun;
 namespace StarterAssets
 {
 
-    [RequireComponent(typeof(CharacterController), typeof(PhotonView))]
+    [RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
     [RequireComponent(typeof(PlayerInput))]
 #endif
@@ -117,10 +117,6 @@ namespace StarterAssets
         private bool isCoroutinesWorking;
         private float sensitivityCamera;
 
-
-        /// <summary>
-        [SerializeField] private ThirdPersonShooterController x;
-        /// </summary>
         private void Awake()
         {
             currentWeapon = Weapons.FirstWeapon;
@@ -462,7 +458,6 @@ namespace StarterAssets
         }
         private void SetWeapon(Weapons weapons)
         {
-            x.SetWeapon(weapons);
             currentWeapon = weapons; // для работы ножа IEnumerator WaitAnimationKnife(), переписать в скрипт ножа!
             _animator.SetBool(_animIDFirstWeapon, false);
             _animator.SetBool(_animIDSecondWeapon, false);

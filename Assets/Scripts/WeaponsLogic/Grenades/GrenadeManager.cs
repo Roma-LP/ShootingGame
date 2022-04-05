@@ -8,7 +8,7 @@ public class GrenadeManager : AmmoManagerGrenade
     [SerializeField, Min(1f)] protected float forceThrow;
 
     private bool isPlaying;
-    public override void UseWepon(Ray ray)
+    public override void UseWepon(Ray ray, int opponentID)
     {
         if (isPlaying == false && CheckCountAmmo())
             StartCoroutine(Grenade(ray));

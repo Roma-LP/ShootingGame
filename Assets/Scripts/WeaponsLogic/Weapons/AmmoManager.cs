@@ -18,11 +18,11 @@ public abstract class AmmoManager : BaseWeapon
         currentAmmo--;
     }
 
-    public override void UseWepon(Ray ray)
+    public override void UseWepon(Ray ray, int opponentID)
     {
         if (CheckCountAmmo())
         {
-            base.UseWepon(ray);
+            base.UseWepon(ray,opponentID);
         }
     }
 

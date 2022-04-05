@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public abstract class BaseWeapon : MonoBehaviour
+public abstract class BaseWeapon : MonoBehaviour , delete
 {
     [SerializeField, Range(0.1f, 3f)] protected float rateOfFire = 0.8f;
     [SerializeField, Range(0f, 100f)] protected float ammoDamage = 30;
@@ -12,18 +12,17 @@ public abstract class BaseWeapon : MonoBehaviour
 
     private bool isUsingWeapon;
     private AudioSource audioSource;
-    
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
     }
    
-    public virtual void UseWepon(Ray raycast)
+    public virtual void UseWepon(Ray raycast, int opponentID)
     {
         if (!isUsingWeapon)
         {
-            StartCoroutine(UsingWeapon(raycast));
+            StartCoroutine(UsingWeapon(raycast, opponentID));
             //audioSource.PlayOneShot(audioClipExplosion);  // пока нет звуков
         }
     } 
@@ -33,13 +32,13 @@ public abstract class BaseWeapon : MonoBehaviour
 
     }
 
-    private IEnumerator UsingWeapon(Ray raycast)
+    private IEnumerator UsingWeapon(Ray raycast, int opponentID)
     {
         isUsingWeapon = true;
         if (Physics.Raycast(raycast, out RaycastHit raycastHit))
         {
             Debug.DrawRay(raycast.origin, raycast.direction, Color.blue);
-            raycastHit.collider.gameObject.GetComponent<Multiplier>()?.DetectedDamage(ammoDamage);
+            raycastHit.collider.gameObject.GetComponent<Multiplier>()?.DetectedDamage(ammoDamage, opponentID);
         }
         Instantiate(prefabHitPartical, raycastHit.point, Quaternion.identity);
 

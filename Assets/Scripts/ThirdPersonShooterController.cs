@@ -4,6 +4,7 @@ using Photon.Realtime;
 using StarterAssets;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using System.Linq;
 
 public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 {
@@ -24,7 +25,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     [SerializeField] private GrenadeManager prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
-    [SerializeField] private PhotonView PV;
+    /*[SerializeField]*/ private PhotonView PV;
     [SerializeField, Min(1f)] private float HP;
 
 
@@ -40,12 +41,11 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
-        //PV = GetComponent<PhotonView>();
+        PV = GetComponent<PhotonView>();
         currentWeapon_v2 = firstWeapon;
         SetAmmoWeapon();
-
         starterAssetsInputs.OnReloadWeapon += ReloadWeapon;
-        //starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
+        starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
 
     private void Update()
@@ -68,7 +68,8 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
         if (starterAssetsInputs.shoot)
         {
-            currentWeapon_v2.UseWepon(ray);
+            
+            currentWeapon_v2.UseWepon(ray, PhotonNetwork.LocalPlayer.ActorNumber);
             crosshair.ChangeSizeCrosshairOnShoot();
             SetAmmoWeapon();
 
@@ -226,14 +227,13 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     //    isPlaying = false;
     //}
 
-
-    public void ReducingLife(float damage)
+    public void ReducingLife(float damage, int opponentID)
     {
-        PV.RPC("TakeDamage", RpcTarget.All, damage);
+            PV.RPC("TakeDamage", RpcTarget.All, damage, opponentID);
     }
 
     [PunRPC]
-    private void TakeDamage(float damage)
+    public void TakeDamage(float damage, int opponentID)
     {
         if (!PV.IsMine) return;
 
@@ -242,6 +242,9 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
         if (HP <= 0f)
         {
             Dead();
+            var props = PhotonNetwork.PlayerList.First(x => x.ActorNumber == opponentID).CustomProperties;
+            var countKilss = props.GetIntInProperties("Kills");
+            props.ResetPropertyValue("Kills", ++countKilss);
         }
     }
 
@@ -256,7 +259,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
     private void OnDestroy()
     {
-        // starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
+        starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
         starterAssetsInputs.OnReloadWeapon -= ReloadWeapon;
     }
 }

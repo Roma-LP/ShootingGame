@@ -5,8 +5,8 @@ public class Multiplier : MonoBehaviour
     [SerializeField, Min(0f)] private float damageMultiplier;
     [SerializeField] private ThirdPersonShooterController shooterController;
 
-    public void DetectedDamage(float damage)
+    public void DetectedDamage(float damage, int opponentID)
     {
-        shooterController.ReducingLife(damage * damageMultiplier);
+        shooterController.ReducingLife(damage * damageMultiplier, opponentID);
     }
 }

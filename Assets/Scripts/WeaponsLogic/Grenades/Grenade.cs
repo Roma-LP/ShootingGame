@@ -34,7 +34,7 @@ public abstract class Grenade : AmmoManagerGrenade
     }
     protected abstract IEnumerator Explosion();
 
-    public override void UseWepon(Ray ray)
+    public override void UseWepon(Ray ray, int opponentID)
     {
         //Throw(ray.direction * forceThrow);
         Throw(ray.direction);

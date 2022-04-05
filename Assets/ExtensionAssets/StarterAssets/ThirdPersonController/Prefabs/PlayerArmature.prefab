@@ -1512,7 +1512,6 @@ GameObject:
   - component: {fileID: 135756642000475821}
   - component: {fileID: 4416926081852918493}
   - component: {fileID: 2056227739}
-  - component: {fileID: 5445923459037043494}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -1612,7 +1611,8 @@ MonoBehaviour:
   CameraAngleOverride: 0
   LockCameraPosition: 0
   playerCamera: {fileID: 0}
-  crosshair: {fileID: 0}
+  crosshair: {fileID: 7113643795330251509}
+  x: {fileID: 0}
   newBehaviourScript: {fileID: 0}
   corotin: {fileID: 0}
 --- !u!114 &5885216827943657505
@@ -1781,28 +1781,7 @@ MonoBehaviour:
   prefabGrenade: {fileID: 6725229744557494813}
   starterAssetsInputs: {fileID: 135756642000475821}
   magazineAmmos: {fileID: 7511426702044680601}
---- !u!114 &5445923459037043494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
+  HP: 100
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0
@@ -3491,7 +3470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4
+      value: -3.9999998
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177912, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3535,7 +3514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2070925441746177913, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
       propertyPath: m_Lens.m_SensorSize.x
-      value: 1.7790698
+      value: 2.1540697
       objectReference: {fileID: 0}
     - target: {fileID: 2070925442191277752, guid: a1a802ecaf6775746bb2a929fb554ad8, type: 3}
       propertyPath: CameraDistance
@@ -4096,12 +4075,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1919745706984327147, guid: cf69dbf4df7a8d7418df11b6cd8aa4f3, type: 3}
   m_PrefabInstance: {fileID: 8655060706035760415}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7113643795330251509 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1919745706984327146, guid: cf69dbf4df7a8d7418df11b6cd8aa4f3, type: 3}
+  m_PrefabInstance: {fileID: 8655060706035760415}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7113643795330251512 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1919745706984327143, guid: cf69dbf4df7a8d7418df11b6cd8aa4f3, type: 3}
   m_PrefabInstance: {fileID: 8655060706035760415}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7113643795330251509}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ab7c95372592a44e8d9d77d9504771b, type: 3}
@@ -4112,7 +4096,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1162211359005486214, guid: cf69dbf4df7a8d7418df11b6cd8aa4f3, type: 3}
   m_PrefabInstance: {fileID: 8655060706035760415}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7113643795330251509}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd5611ebafa0602479f9a352a90d5148, type: 3}
