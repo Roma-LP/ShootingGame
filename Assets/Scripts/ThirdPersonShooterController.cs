@@ -2,9 +2,10 @@ using Cinemachine;
 using Photon.Pun;
 using Photon.Realtime;
 using StarterAssets;
+using System;
+using System.Linq;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using System.Linq;
 
 public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 {
@@ -25,9 +26,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     [SerializeField] private GrenadeManager prefabGrenade;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
-    /*[SerializeField]*/ private PhotonView PV;
-    [SerializeField, Min(1f)] private float HP;
-
+    [SerializeField, Min(1f)] private float healthPoint = 150;
 
     private ThirdPersonController thirdPersonController;
     private Cinemachine3rdPersonFollow personFollowComponent;
@@ -35,7 +34,21 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     private Vector2 screenCenterPoint;
     private Ray ray;
     private BaseWeapon currentWeapon_v2;
+    private PhotonView PV;
 
+    public float HP
+    {
+        private set
+        {
+            healthPoint = value;
+            if (healthPoint < 0)
+                healthPoint = 0;
+        }
+        get
+        {
+            return healthPoint;
+        }
+    }
 
     private void Awake()
     {
@@ -44,9 +57,12 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
         PV = GetComponent<PhotonView>();
         currentWeapon_v2 = firstWeapon;
         SetAmmoWeapon();
+        if (PV.IsMine)
+            GameManager.Instance.SetNewHP(HP);
         starterAssetsInputs.OnReloadWeapon += ReloadWeapon;
         starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
+
 
     private void Update()
     {
@@ -68,7 +84,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
         if (starterAssetsInputs.shoot)
         {
-            
+
             currentWeapon_v2.UseWepon(ray, PhotonNetwork.LocalPlayer.ActorNumber);
             crosshair.ChangeSizeCrosshairOnShoot();
             SetAmmoWeapon();
@@ -81,7 +97,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
             //else
             //{
             //    currentWeapon_v2.UseWepon(ray);
-            //    crosshair.ChangeSizeCrosshairOnShoot();
+            //    UI_Canvas.ChangeSizeCrosshairOnShoot();
             //}
             //SetAmmoWeapon();
 
@@ -229,7 +245,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
     public void ReducingLife(float damage, int opponentID)
     {
-            PV.RPC("TakeDamage", RpcTarget.All, damage, opponentID);
+        PV.RPC("TakeDamage", RpcTarget.All, damage, opponentID);
     }
 
     [PunRPC]
@@ -237,8 +253,8 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     {
         if (!PV.IsMine) return;
 
-        HP -= damage;
-
+        HP = HP - damage;
+        GameManager.Instance.SetNewHP(HP);
         if (HP <= 0f)
         {
             Dead();

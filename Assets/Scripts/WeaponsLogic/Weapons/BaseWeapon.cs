@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public abstract class BaseWeapon : MonoBehaviour , delete
+public abstract class BaseWeapon : MonoBehaviour
 {
     [SerializeField, Range(0.1f, 3f)] protected float rateOfFire = 0.8f;
     [SerializeField, Range(0f, 100f)] protected float ammoDamage = 30;

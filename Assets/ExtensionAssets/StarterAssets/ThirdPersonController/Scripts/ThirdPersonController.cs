@@ -67,7 +67,7 @@ namespace StarterAssets
         public Weapons CurrentWeapon { get { return currentWeapon; } }
 
         [SerializeField] private GameObject playerCamera;
-        [SerializeField] private GameObject crosshair;
+        [SerializeField] private GameObject UI_Canvas;
         private PhotonView PV;
 
         // cinemachine
@@ -140,12 +140,12 @@ namespace StarterAssets
             {
 
                 playerCamera.SetActive(true);
-                crosshair.SetActive(true);
+                UI_Canvas.SetActive(true);
             }
             else
             {
                 playerCamera.SetActive(false);
-                crosshair.SetActive(false);
+                Destroy(UI_Canvas);
                 Destroy(this);
                 Destroy(GetComponent<ThirdPersonShooterController>());
                 Destroy(GetComponent<CharacterController>());

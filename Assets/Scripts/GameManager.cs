@@ -14,10 +14,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     private ScorePanel scorePanel;
     private StarterAssetsInputs starterAssetsInputs;
     private static GameManager instance;
-    string characterPrefabName;
-    Vector3 spawnPosition;
+    private string characterPrefabName;
+    private Vector3 spawnPosition;
 
     public event Action<float> OnFlashbagEffect;
+    public event Action<float> OnHPChange;
 
     private void Awake()
     {
@@ -48,11 +49,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public void ShowFlashBagEffect(float flashTime)
-    {
-        OnFlashbagEffect?.Invoke(flashTime);
-    }
-
     [Serializable]
     public class TeamPoint
     {
@@ -71,8 +67,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         GameObject player = PhotonNetwork.Instantiate(characterPrefabName, spawnPosition, Quaternion.identity);
         starterAssetsInputs = player.GetComponent<StarterAssetsInputs>();
     }
+    public void ShowFlashBagEffect(float flashTime)
+    {
+        OnFlashbagEffect?.Invoke(flashTime);
+    }
+    public void SetNewHP(float HP)
+    {
+        OnHPChange?.Invoke(HP);
+    }
 }
-
-
-
-
