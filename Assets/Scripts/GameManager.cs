@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     private Vector3 spawnPosition;
 
     public event Action<float> OnFlashbagEffect;
-    public event Action<float> OnHPChange;
 
     private void Awake()
     {
@@ -70,9 +69,5 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void ShowFlashBagEffect(float flashTime)
     {
         OnFlashbagEffect?.Invoke(flashTime);
-    }
-    public void SetNewHP(float HP)
-    {
-        OnHPChange?.Invoke(HP);
     }
 }

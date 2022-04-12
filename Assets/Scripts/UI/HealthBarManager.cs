@@ -8,30 +8,16 @@ public class HealthBarManager : MonoBehaviour
     [SerializeField] private Image lineHP;
 
     private float maxHP;
-    private bool isFirstSetHP = true;
-
-    private void Awake()
+    public void SetCurrentHP(float newHP)
     {
-        GameManager.Instance.OnHPChange += SetCurrentHP;
-    }
-
-    private void SetCurrentHP(float newHP)
-    {
-        if (isFirstSetHP)
-        {
-            maxHP = newHP;
-            isFirstSetHP = false;
-            lineHP.fillAmount = 1;
-        }
-        else
-        {
-            lineHP.fillAmount = lineHP.fillAmount - (int.Parse(countHP.text) - newHP) / maxHP;
-        }
+        lineHP.fillAmount = lineHP.fillAmount - (int.Parse(countHP.text) - newHP) / maxHP;
         countHP.text = newHP.ToString();
     }
 
-    private void OnDestroy()
+    public void SetMaxHP(float maxHP)
     {
-        GameManager.Instance.OnHPChange -= SetCurrentHP;
+        this.maxHP = maxHP;
+        lineHP.fillAmount = 1f;
+        countHP.text = maxHP.ToString();
     }
 }

@@ -9,7 +9,6 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 {
-    //[SerializeField] private CinemachineFramingTransposer VirtualCamera;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     [SerializeField] private float normalSensitivity;
     [SerializeField] private float aimSensitivity;
@@ -18,22 +17,16 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     [SerializeField, Min(0.01f)] private float aimChangeSpeed;
     [SerializeField] private CrosshairScatter crosshair;
 
-    [SerializeField] private Transform spawnPointer;
-    [SerializeField, Range(0f, 2500f)] protected float forceThrow;
-    [SerializeField] private Firearms firstWeapon;
-    [SerializeField] private Firearms secondWeapon;
-    [SerializeField] private ColdWeapon thirdWeapon;
-    [SerializeField] private GrenadeManager prefabGrenade;
+    [SerializeField] private SwitchWeaponsLogic switchWeaponsLogic;
     [SerializeField] private StarterAssetsInputs starterAssetsInputs;
     [SerializeField] private MagazineAmmos magazineAmmos;
+    [SerializeField] private HealthBarManager healthBarManager;
     [SerializeField, Min(1f)] private float healthPoint = 150;
 
     private ThirdPersonController thirdPersonController;
     private Cinemachine3rdPersonFollow personFollowComponent;
-    private bool isPlaying;
     private Vector2 screenCenterPoint;
     private Ray ray;
-    private BaseWeapon currentWeapon_v2;
     private PhotonView PV;
 
     public float HP
@@ -55,14 +48,9 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
         thirdPersonController = GetComponent<ThirdPersonController>();
         personFollowComponent = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
         PV = GetComponent<PhotonView>();
-        currentWeapon_v2 = firstWeapon;
-        SetAmmoWeapon();
-        if (PV.IsMine)
-            GameManager.Instance.SetNewHP(HP);
+        healthBarManager.SetMaxHP(HP);
         starterAssetsInputs.OnReloadWeapon += ReloadWeapon;
-        starterAssetsInputs.OnPickWeaponCustom += SetWeapon;
     }
-
 
     private void Update()
     {
@@ -85,36 +73,9 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
         if (starterAssetsInputs.shoot)
         {
 
-            currentWeapon_v2.UseWepon(ray, PhotonNetwork.LocalPlayer.ActorNumber);
+            switchWeaponsLogic.CurrentWeapon.UseWepon(ray, PhotonNetwork.LocalPlayer.ActorNumber);
             crosshair.ChangeSizeCrosshairOnShoot();
-            SetAmmoWeapon();
-
-
-            //if (currentWeapon_v2 is Grenade)
-            //{
-            //    if (isPlaying == false) StartCoroutine(Grenade());
-            //}
-            //else
-            //{
-            //    currentWeapon_v2.UseWepon(ray);
-            //    UI_Canvas.ChangeSizeCrosshairOnShoot();
-            //}
-            //SetAmmoWeapon();
-
-
-            //if (thirdPersonController.CurrentWeapon == Weapons.FourthWeapon)
-            //{
-            //    if(isPlaying == false) StartCoroutine(Grenade());
-            //}
-            //if (hitTransform != null)
-            //{
-            //    Instantiate(hitPartical, raycastHit.point, Quaternion.identity);
-
-            //    var hole = Instantiate(bulletHole, raycastHit.point + raycastHit.normal * 0.001f, Quaternion.identity);
-            //    hole.transform.position = raycastHit.point + raycastHit.normal * 0.01f;
-            //    hole.transform.rotation = Quaternion.LookRotation(raycastHit.normal);
-            //    hole.transform.Rotate(new Vector3(0, 0, 0));
-            //}
+            magazineAmmos.SetAmmoWeapon(switchWeaponsLogic.CurrentWeapon);
         }
         else
         {
@@ -137,111 +98,15 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
             thirdPersonController.SetSensitivity(normalSensitivity);
         }
     }
-
-    //public void SetWeapon(Weapons weapons)
-    //{
-    //    print("do RPC");
-    //    photonView.RPC("SetingWeapon", RpcTarget.All, weapons);
-    //    print("posle RPC");
-    //}
-
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
-    {
-        if (!PV.IsMine && targetPlayer == PV.Owner)
-        {
-            SetWeapon((Weapons)changedProps["weapon"]);
-        }
-    }
-
-    public void SetWeapon(Weapons weapons)
-    {
-        if (PV.IsMine)
-        {
-            var prop = PhotonNetwork.LocalPlayer.CustomProperties;
-            prop.ResetPropertyValue("weapon", weapons);
-            //prop.Add("weapon", weapons);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(prop);
-        }
-        //if (!photonView.IsMine)  return;
-        //currentWeapon = weapons;
-        firstWeapon.gameObject.SetActive(false);
-        secondWeapon.gameObject.SetActive(false);
-        thirdWeapon.gameObject.SetActive(false);
-        prefabGrenade.gameObject.SetActive(false);
-        switch (weapons)
-        {
-            case Weapons.FirstWeapon:
-                firstWeapon.gameObject.SetActive(true);
-                currentWeapon_v2 = firstWeapon;
-                break;
-            case Weapons.SecondWeapon:
-                secondWeapon.gameObject.SetActive(true);
-                currentWeapon_v2 = secondWeapon;
-                break;
-            case Weapons.ThirdWeapon:
-                thirdWeapon.gameObject.SetActive(true);
-                currentWeapon_v2 = thirdWeapon;
-                break;
-            case Weapons.FourthWeapon:
-                prefabGrenade.gameObject.SetActive(true);
-                currentWeapon_v2 = prefabGrenade;
-                break;
-        }
-        SetAmmoWeapon();
-    }
-
-    private void SetAmmoWeapon()
-    {
-        switch (currentWeapon_v2)
-        {
-            case AmmoManagerFirearms:
-                {
-                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
-                    magazineAmmos.SetFirearms(ammoManagerWeapon.CurrentAmmo, ammoManagerWeapon.AmmoTotal);
-                    break;
-                }
-            case AmmoManagerGrenade:
-                {
-                    var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerGrenade;
-                    magazineAmmos.SetGrenade(ammoManagerWeapon.CurrentAmmo);
-                    if (ammoManagerWeapon.CurrentAmmo == 0)
-                        prefabGrenade.gameObject.SetActive(false);
-                    break;
-                }
-            case ColdWeapon:
-                {
-                    magazineAmmos.SetColdWeapon();
-                    break;
-                }
-        }
-    }
-
     private void ReloadWeapon()
     {
-        if (currentWeapon_v2 is AmmoManagerFirearms)
+        if (switchWeaponsLogic.CurrentWeapon is AmmoManagerFirearms)
         {
-            var ammoManagerWeapon = currentWeapon_v2 as AmmoManagerFirearms;
+            var ammoManagerWeapon = switchWeaponsLogic.CurrentWeapon as AmmoManagerFirearms;
             ammoManagerWeapon.ReloadCurrentWeapon();
-            SetAmmoWeapon();
+            magazineAmmos.SetAmmoWeapon(switchWeaponsLogic.CurrentWeapon);
         }
     }
-
-    //IEnumerator Grenade()
-    //{
-    //    isPlaying = true;
-    //    var x = currentWeapon_v2 as Grenade;
-    //    if (!x.CheckCountAmmo()) yield break;
-    //    x.kek();
-    //    Grenade grenade = Instantiate(prefabGrenade, spawnPointer.position, Quaternion.identity);
-    //    grenade.Throw(ray.direction * forceThrow);
-    //    prefabGrenade.gameObject.SetActive(false);
-    //    yield return new WaitForSeconds(1.3f);
-    //    if (x.GetCurrentAmmo() != 0)
-    //    {
-    //        prefabGrenade.gameObject.SetActive(true);
-    //    }
-    //    isPlaying = false;
-    //}
 
     public void ReducingLife(float damage, int opponentID)
     {
@@ -254,12 +119,12 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
         if (!PV.IsMine) return;
 
         HP = HP - damage;
-        GameManager.Instance.SetNewHP(HP);
+        healthBarManager.SetCurrentHP(HP);
         if (HP <= 0f)
         {
             Dead();
             var props = PhotonNetwork.PlayerList.First(x => x.ActorNumber == opponentID).CustomProperties;
-            var countKilss = props.GetIntInProperties("Kills");
+            int countKilss = props.GetIntInProperties("Kills");
             props.ResetPropertyValue("Kills", ++countKilss);
         }
     }
@@ -267,7 +132,7 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
     public void Dead()
     {
         var props = PhotonNetwork.LocalPlayer.CustomProperties;
-        var countDeaths = props.GetIntInProperties("Deaths");
+        int countDeaths = props.GetIntInProperties("Deaths");
         props.ResetPropertyValue("Deaths", ++countDeaths);
         PhotonNetwork.Destroy(gameObject);
         GameManager.Instance.Spawn();
@@ -275,7 +140,6 @@ public class ThirdPersonShooterController : MonoBehaviourPunCallbacks
 
     private void OnDestroy()
     {
-        starterAssetsInputs.OnPickWeaponCustom -= SetWeapon;
         starterAssetsInputs.OnReloadWeapon -= ReloadWeapon;
     }
 }

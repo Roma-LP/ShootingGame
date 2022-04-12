@@ -5,7 +5,6 @@ using System.Linq;
 public class FlashLight : ThrowingGrenade
 {
     [SerializeField, Min(1f)] private float flashTime;
-    [SerializeField] private Animator anim;
 
     private CapsuleCollider capsuleCollider;
 

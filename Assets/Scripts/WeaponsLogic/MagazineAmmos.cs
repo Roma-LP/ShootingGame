@@ -14,22 +14,45 @@ public class MagazineAmmos : MonoBehaviour
         this.countAmmoTotal.gameObject.SetActive(mod);
     }
 
-    public void SetFirearms(int currentAmmo, int countAmmoTotal)
+    private void SetFirearms(int currentAmmo, int countAmmoTotal)
     {
         SetActiveUIAmmos(true);
         this.currentAmmo.text = currentAmmo.ToString();
         this.countAmmoTotal.text = countAmmoTotal.ToString();
     }
 
-    public void SetGrenade(int currentAmmo)
+    private void SetGrenade(int currentAmmo)
     {
         SetActiveUIAmmos(false);
         this.currentAmmo.text = currentAmmo.ToString();
         this.currentAmmo.gameObject.SetActive(true);
     }
 
-    public void SetColdWeapon()
+    private void SetColdWeapon()
     {
         SetActiveUIAmmos(false);
+    }
+    public void SetAmmoWeapon(BaseWeapon currentWeapon)
+    {
+        switch (currentWeapon)
+        {
+            case AmmoManagerFirearms:
+                {
+                    var ammoManagerWeapon = currentWeapon as AmmoManagerFirearms;
+                    SetFirearms(ammoManagerWeapon.CurrentAmmo, ammoManagerWeapon.AmmoTotal);
+                    break;
+                }
+            case AmmoManagerGrenade:
+                {
+                    var ammoManagerWeapon = currentWeapon as AmmoManagerGrenade;
+                    SetGrenade(ammoManagerWeapon.CurrentAmmo);
+                    break;
+                }
+            case ColdWeapon:
+                {
+                    SetColdWeapon();
+                    break;
+                }
+        }
     }
 }

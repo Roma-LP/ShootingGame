@@ -1183,9 +1183,8 @@ GameObject:
   - component: {fileID: 5445923459037043494}
   - component: {fileID: 2025903954}
   - component: {fileID: 2025903955}
-  - component: {fileID: 4256043682461217322}
   m_Layer: 3
-  m_Name: Soldier
+  m_Name: Sniper
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1427,11 +1426,16 @@ MonoBehaviour:
   aimCameraDistance: 1.5
   aimChangeSpeed: 10
   crosshair: {fileID: 7113643795330251512}
-  switchWeaponsLogic: {fileID: 4256043682461217322}
+  spawnPointer: {fileID: 1495660504}
+  forceThrow: 900
+  firstWeapon: {fileID: 1184168336}
+  secondWeapon: {fileID: 1052228460}
+  thirdWeapon: {fileID: 380209159}
+  prefabGrenade: {fileID: 6725229744557494813}
   starterAssetsInputs: {fileID: 135756642000475821}
   magazineAmmos: {fileID: 7511426702044680601}
   healthBarManager: {fileID: 1378948381421109223}
-  healthPoint: 400
+  healthPoint: 250
 --- !u!114 &5445923459037043494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1536,25 +1540,6 @@ MonoBehaviour:
     LayerIndex: 1
   - SynchronizeType: 1
     LayerIndex: 2
---- !u!114 &4256043682461217322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 011b9320d8e1a5a4ca296ee517442e43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firstWeapon: {fileID: 1184168336}
-  secondWeapon: {fileID: 1052228460}
-  thirdWeapon: {fileID: 380209159}
-  prefabGrenade: {fileID: 6725229744557494813}
-  starterAssetsInputs: {fileID: 135756642000475821}
-  magazineAmmos: {fileID: 7511426702044680601}
-  PV: {fileID: 5445923459037043494}
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0
@@ -2983,7 +2968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2498142292319885331, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: grenadeName
-      value: FlashThrowing
+      value: SmokeThrowing
       objectReference: {fileID: 0}
     - target: {fileID: -2498142292319885331, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: spawnPointer
@@ -2992,7 +2977,7 @@ PrefabInstance:
     - target: {fileID: -2498142292319885331, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: throwingGrenade
       value: 
-      objectReference: {fileID: 306057281056251433, guid: 9ab2dfeda86ce3f45a0a118ff9fd7e5c, type: 3}
+      objectReference: {fileID: 3368556389115978268, guid: 4c8e256110c972a478e4a4efc191e16b, type: 3}
     - target: {fileID: 1288224424305008, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: m_Name
       value: SmokeManager
