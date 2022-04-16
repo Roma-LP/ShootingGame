@@ -17,27 +17,24 @@ public abstract class ThrowingGrenade : MonoBehaviourPun
         grenadePV = GetComponent<PhotonView>();
     }
 
-    public void PhotonThrow(Vector3 direction)
+    public void RPC_Throw(Vector3 direction, int opponentID)
     {
-        grenadePV.RPC("Throw", RpcTarget.All, direction);
+        grenadePV.RPC("Throw", RpcTarget.All, direction, opponentID);
     }
 
 
     [PunRPC]
-    public void Throw(Vector3 direction) 
+    public void Throw(Vector3 direction, int opponentID) 
     {
-        //body.isKinematic = false;
-       // body.useGravity = true;
         body.AddForce(direction);
-        StartCoroutine(Throwing());
+        StartCoroutine(Throwing(opponentID));
     }
 
-
-    protected virtual IEnumerator Throwing()
+    protected virtual IEnumerator Throwing(int opponentID)
     {
         yield return new WaitForSeconds(timeToExplosion);
         body.isKinematic = true;
-        StartCoroutine(Explosion());
+        StartCoroutine(Explosion(opponentID));
     }
-    protected abstract IEnumerator Explosion();
+    protected abstract IEnumerator Explosion(int opponentID);
 }

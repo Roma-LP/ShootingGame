@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageMultiplier: 2
-  shooterController: {fileID: 2056227739}
+  healthManager: {fileID: 8780652698818747378}
 --- !u!1 &1528771118847088261
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,7 +747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageMultiplier: 1
-  shooterController: {fileID: 2056227739}
+  healthManager: {fileID: 8780652698818747378}
 --- !u!1 &3266411622757557566
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,7 +1184,8 @@ GameObject:
   - component: {fileID: 2025903954}
   - component: {fileID: 2025903955}
   - component: {fileID: 4256043682461217322}
-  m_Layer: 3
+  - component: {fileID: 8780652698818747378}
+  m_Layer: 6
   m_Name: Soldier
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1284,8 +1285,6 @@ MonoBehaviour:
   LockCameraPosition: 0
   playerCamera: {fileID: 2070925443209102895}
   UI_Canvas: {fileID: 7113643795330251509}
-  newBehaviourScript: {fileID: 0}
-  corotin: {fileID: 0}
 --- !u!114 &135756642000475821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1430,8 +1429,6 @@ MonoBehaviour:
   switchWeaponsLogic: {fileID: 4256043682461217322}
   starterAssetsInputs: {fileID: 135756642000475821}
   magazineAmmos: {fileID: 7511426702044680601}
-  healthBarManager: {fileID: 1378948381421109223}
-  healthPoint: 400
 --- !u!114 &5445923459037043494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1555,6 +1552,21 @@ MonoBehaviour:
   starterAssetsInputs: {fileID: 135756642000475821}
   magazineAmmos: {fileID: 7511426702044680601}
   PV: {fileID: 5445923459037043494}
+--- !u!114 &8780652698818747378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cc79c5272686714aa78fece6bc20ac8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthPoint: 100
+  PV: {fileID: 5445923459037043494}
+  healthBarManager: {fileID: 1378948381421109223}
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0
@@ -2983,7 +2995,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2498142292319885331, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: grenadeName
-      value: FlashThrowing
+      value: HEThrowing
       objectReference: {fileID: 0}
     - target: {fileID: -2498142292319885331, guid: cd473abd0c0d6f94d9669ce8a6bc8fb2, type: 3}
       propertyPath: spawnPointer

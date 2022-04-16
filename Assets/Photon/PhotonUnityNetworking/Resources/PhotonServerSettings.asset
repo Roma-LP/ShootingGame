@@ -46,6 +46,7 @@ MonoBehaviour:
   - Grenade
   - Throw
   - SetWeapon
+  - RPC_ReducingLife
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

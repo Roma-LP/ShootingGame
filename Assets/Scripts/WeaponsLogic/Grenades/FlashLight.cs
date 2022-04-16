@@ -12,8 +12,6 @@ public class FlashLight : ThrowingGrenade
     {
         base.Awake();
         capsuleCollider = GetComponent<CapsuleCollider>();
-        //var x = Camera.main.GetComponentInChildren<FlashCanvasManager>();
-        //var y = Camera.main.GetComponentInParent<FlashCanvasManager>();
     }
 
     private bool CalculateExplosure()
@@ -48,7 +46,7 @@ public class FlashLight : ThrowingGrenade
         return GeometryUtility.TestPlanesAABB(planes, capsuleCollider.bounds);
     }
 
-    protected override IEnumerator Explosion()
+    protected override IEnumerator Explosion(int opponentID)
     {
         if(CalculateExplosure())
         {

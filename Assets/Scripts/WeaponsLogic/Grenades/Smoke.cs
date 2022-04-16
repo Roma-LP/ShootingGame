@@ -7,7 +7,7 @@ public class Smoke : ThrowingGrenade
     [SerializeField] private float minVelocity = 0.01f;
     [SerializeField] private float lifeSmoke;
 
-    protected override IEnumerator Throwing()
+    protected override IEnumerator Throwing(int opponentID)
     {
         yield return new WaitForSeconds(timeToExplosion);
         do
@@ -15,10 +15,10 @@ public class Smoke : ThrowingGrenade
             yield return new WaitForFixedUpdate();
         } while (body.velocity.magnitude > minVelocity);
         body.isKinematic = true;
-        StartCoroutine(Explosion());
+        StartCoroutine(Explosion(opponentID));
     }
 
-    protected override IEnumerator Explosion()
+    protected override IEnumerator Explosion(int opponentID)
     {
         var smoke = Instantiate(smokeParticlePrefab, transform.position, Quaternion.identity);
         var smokePartickeSystem = smoke.main;

@@ -3,10 +3,10 @@ using UnityEngine;
 public class Multiplier : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float damageMultiplier;
-    [SerializeField] private ThirdPersonShooterController shooterController;
+    [SerializeField] private HealthManager healthManager;
 
     public void DetectedDamage(float damage, int opponentID)
     {
-        shooterController.ReducingLife(damage * damageMultiplier, opponentID);
+        healthManager.RPC_ReducingLife(damage * damageMultiplier, opponentID);
     }
 }

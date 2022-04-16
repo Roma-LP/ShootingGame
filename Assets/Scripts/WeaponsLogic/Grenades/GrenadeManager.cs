@@ -4,7 +4,6 @@ using Photon.Pun;
 
 public class GrenadeManager : AmmoManagerGrenade
 {
-    [SerializeField] private ThrowingGrenade throwingGrenade;
     [SerializeField] private string grenadeName;
     [SerializeField] private Transform spawnPointer;
     [SerializeField, Min(1f)] protected float forceThrow;
@@ -14,18 +13,18 @@ public class GrenadeManager : AmmoManagerGrenade
     {
         if (isPlaying == false && CheckCountAmmo())
         {
-            StartCoroutine(Grenade(ray));
+            StartCoroutine(Grenade(ray, opponentID));
             //TestGrenade(ray);
         }
     }
 
-    IEnumerator Grenade(Ray ray)
+    IEnumerator Grenade(Ray ray, int opponentID)
     {
         isPlaying = true;
         Shot();
         //ThrowingGrenade grenade = Instantiate(throwingGrenade, spawnPointer.position, Quaternion.identity);
         ThrowingGrenade grenade = PhotonNetwork.Instantiate(grenadeName, spawnPointer.position, Quaternion.identity).GetComponent<ThrowingGrenade>();
-        grenade.PhotonThrow(ray.direction * forceThrow);
+        grenade.RPC_Throw(ray.direction * forceThrow, opponentID);
         yield return new WaitForSeconds(1.3f);
         isPlaying = false;
     }
